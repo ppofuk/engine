@@ -43,7 +43,7 @@ GPATH
 *.vcxproj.filters
 *.xcodeproj
 *.opensdf
-*.exe
 
+app.exe
 log.txt
 

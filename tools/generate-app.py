@@ -34,7 +34,7 @@ def RunGyp(format):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     if sys.platform in ('win32'):
-        parser.add_argument("-f", "--format", type=str, default="msvs",
+        parser.add_argument("-f", "--format", type=str, default="ninja",
                             help="Specifiy build systems to generate.")
     elif sys.platform.startswith('linux'):
         parser.add_argument("-f", "--format", type=str, default="ninja",
