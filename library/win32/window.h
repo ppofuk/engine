@@ -1,6 +1,12 @@
 #ifndef OBSIDIAN_WINDOW_H_
 #define OBSIDIAN_WINDOW_H_
 
+// TODO: move from util namespace to core namespace.
+// TODO: Window::CheckForEvents() should return WindowEventType.
+//       See [../window.xlib.h]
+// TODO: Add WindowEventType current_event_ to Window, so Window::OnResize,
+//       Window::OnFocus... set current_event_.
+
 #include "GL/glew.h"
 
 #include <windows.h>

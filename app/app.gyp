@@ -43,7 +43,8 @@
           }], # condition OS=win
           ['OS=="linux"', {
             'sources': [
-              'main-posix.cc'
+              'main-posix.cc',
+              'simple-shader.cc'
             ],
             'cflags': [
               '-Wall',

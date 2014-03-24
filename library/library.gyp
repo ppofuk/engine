@@ -16,6 +16,31 @@
         '../third-party/libpng.gyp:libpng',
         '../third-party/glew.gyp:glew'
       ],
+      'sources': [
+        'basic-types.h',
+        'linked-list.h',
+        'logger.cc',
+        'logger.h',
+        'singleton.h',
+        'sprite-properties.cc',
+        'sprite-properties.h',
+        'sprite.h',
+        'sprite.cc',
+        'texture-abstract.h',
+        'texture-png.h',
+        'texture-png.cc',
+        'reader-inl.h',
+        # OpenGL stuff
+        'gl/gl-texture.cc',
+        'gl/gl-texture.h',
+        'gl/gl-buffer.h',
+        'gl/gl-program.h',
+        'gl/gl-program.cc',
+        'gl/gl-shader.h',
+        'gl/gl-shader.cc',
+        'gl/gl-texture.h',
+        'gl/gl-texture.cc'
+      ],
       'direct_dependent_settings': {
         'include_dirs': ['.'],
         'conditions': [
@@ -69,31 +94,6 @@
               'OS_WINDOWS'
           ],
            'sources': [
-            # TODO: all before win32 stuff should be in global source
-            # Add sources here
-            'basic-types.h',
-            'linked-list.h',
-            'logger.cc',
-            'logger.h',
-            'singleton.h',
-            'sprite-properties.cc',
-            'sprite-properties.h',
-            'sprite.h',
-            'sprite.cc',
-            'texture-abstract.h',
-            'texture-png.h',
-            'texture-png.cc',
-            'reader-inl.h',
-            # OpenGL stuff
-            'gl/gl-texture.cc',
-            'gl/gl-texture.h',
-            'gl/gl-buffer.h',
-            'gl/gl-program.h',
-            'gl/gl-program.cc',
-            'gl/gl-shader.h',
-            'gl/gl-shader.cc',
-            'gl/gl-texture.h',
-            'gl/gl-texture.cc',
             # Widnows stuff
             'win32/rectangle.cc',
             'win32/rectangle.h',
@@ -136,10 +136,8 @@
           ],
            'sources': [
               # Add sources here
-              'texture-png.cc',
-              'sprite-properties.cc',
-              'sprite.cc',
-              'window-xlib.cc'
+              'window-xlib.cc',
+              'window-xlib.h'
             ],
         }],
       ],

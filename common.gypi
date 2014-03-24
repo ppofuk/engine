@@ -11,20 +11,26 @@
 		  'defines': [
 		    'DEBUG', '_DEBUG'
 		  ],
-		  'cflags': [
-        '/ZI'
-		  ],
-      'ldflags': [
-        '/debug'
-      ]
+      'conditions': [
+        ['OS=="win"', {
+          'cflags': [
+            '/ZI'
+          ],
+          'ldflags': [
+            '/debug'
+          ]
+        }],
+        ['OS=="linux"', {
+          'cflags': [
+            '-ggdb'
+          ]
+        }]
+      ],
     },
     'Release': {
 		  'defines': [
 		    'NDEBUG'
-		  ],
-      'cflags': [
-        '/Zi'
-      ]
+		  ]
     }
 	 }
   }

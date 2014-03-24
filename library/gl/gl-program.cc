@@ -60,8 +60,8 @@ GLUniform<Type> GLProgram::Uniform(Type& attribute, const char* name) {
 
 template<typename Type>
 GLAttribute<Type> GLProgram::Attribute(Type& attribute, const char* name) {
-  GLUniform<Type> attribute(attribute, name, program_);
-  return attribute;
+  GLUniform<Type> ret_attribute(attribute, name, program_);
+  return ret_attribute;
 }
 
 } //  namespace render

@@ -13,17 +13,20 @@ Logger::~Logger(void) {
 void Logger::Log(const char* msg) {
   FILE* file = Singleton<Logger>::Instance().get_file();
   fputs(msg, file);
+  fputs(msg, stdout);
   fflush(file);
 }
 
 void Logger::Log(int msg) {
   FILE* file = Singleton<Logger>::Instance().get_file();
   fprintf(file, "%d", msg);
+  fprintf(stdout, "%d", msg);
 }
 
 void Logger::Log(float msg) {
   FILE* file = Singleton<Logger>::Instance().get_file();
   fprintf(file, "%f", msg);
+  fprintf(stdout, "%f", msg);
 }
 
 Logger& Logger::operator<<(const char* rhs) {

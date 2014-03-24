@@ -4,8 +4,6 @@
 #ifndef OBSIDIAN_APP_SIMPLE_SHADER_H_
 #define OBSIDIAN_APP_SIMPLE_SHADER_H_
 
-#include <windows.h>
-#include "win32/window.h"
 #include "texture-png.h"
 #include "gl/gl-texture.h"
 #include "gl/gl-buffer.h"
