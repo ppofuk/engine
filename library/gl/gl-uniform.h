@@ -11,7 +11,7 @@ template <typename Type>
 class GLUniform {
  public:
   GLUniform(Type& variable, const char* name, GLuint program)
-    : variable_(variable), name_(name), program_(program) {
+      : variable_(variable), name_(name), program_(program) {
     location_ = glGetUniformLocation(program_, name);
   }
 
@@ -31,6 +31,6 @@ class GLUniform {
   GLuint program_;
 };
 
-} //  namespace render
+}  //  namespace render
 
-#endif // OBSIDIAN_GL_UNIFORM_H_
+#endif  // OBSIDIAN_GL_UNIFORM_H_

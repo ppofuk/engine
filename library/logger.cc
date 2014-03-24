@@ -2,13 +2,9 @@
 
 namespace util {
 
-Logger::Logger(void) {
-  file_ = fopen("log.txt", "a");
-}
+Logger::Logger(void) { file_ = fopen("log.txt", "a"); }
 
-Logger::~Logger(void) {
-  fclose(file_);
-}
+Logger::~Logger(void) { fclose(file_); }
 
 void Logger::Log(const char* msg) {
   FILE* file = Singleton<Logger>::Instance().get_file();
@@ -64,4 +60,4 @@ Logger& Logger::operator<<(LoggerType rhs) {
 
 HasLog::HasLog() : log(Singleton<Logger>::Instance()) {}
 
-} // namespace util
+}  // namespace util

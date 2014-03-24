@@ -35,6 +35,12 @@ class Logger {
   // Getters and setters.
   FILE* get_file() { return file_; }
 
+  template<typename Type> char* Address(Type& var) {
+    static char address[18];
+    sprintf(address, "%p", (void*)var);
+    return address;
+  }
+
   // operators.
   Logger& operator<<(const char* rhs);
 

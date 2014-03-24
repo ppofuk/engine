@@ -16,7 +16,7 @@ template <typename Type>
 class GLAttribute {
  public:
   GLAttribute(Type& variable, const char* name, GLuint program)
-    : variable_(variable), name_(name), program_(program) {
+      : variable_(variable), name_(name), program_(program) {
     location_ = glGetAttribLocation(program_, name);
   }
 
@@ -40,13 +40,9 @@ class GLAttribute {
                           (void*)(offset * sizeof(Type)));
   }
 
-  void EnableVertexAttrib() {
-    glEnableVertexAttribArray(location_);
-  }
+  void EnableVertexAttrib() { glEnableVertexAttribArray(location_); }
 
-  void DisableVertexAttrib() {
-    glDisableVertexAttribArray(location_);
-  }
+  void DisableVertexAttrib() { glDisableVertexAttribArray(location_); }
 
  private:
   GLint location_;
@@ -55,6 +51,6 @@ class GLAttribute {
   GLuint program_;
 };
 
-} //  namespace render
+}  //  namespace render
 
-#endif // OBSIDIAN_GL_ATTRIBUTE_H_
+#endif  // OBSIDIAN_GL_ATTRIBUTE_H_
