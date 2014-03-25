@@ -54,7 +54,9 @@
         "-I", "D:\\src\\obsidian\\library",
         "-I", "D:\\src\\obsidian\\third-party\\libpng",
         "-I", "D:\\src\\obsidian\\third-party\\zlib",
-        "-I", "D:\\src\\obsidian\\third-party\\gtest\\include"
+        "-I", "D:\\src\\obsidian\\third-party\\gtest\\include",
+
+        "-ferror-limit=0"
     ]
   }
 }

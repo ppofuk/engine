@@ -15,10 +15,11 @@
 #include "rectangle.h"
 #include "window-handles.h"
 #include "../logger.h"
+#include "../basic-types.h"
 
-namespace util {
+namespace core {
 
-class Window {
+class Window : public util::HasLog {
  public:
   Window(void);
   ~Window(void);
@@ -58,6 +59,7 @@ class Window {
 
   // Setters and geters.
   bool get_is_init() { return is_init_; }
+  bool is_init() { return is_init_; }
   void set_instance(HINSTANCE instance) { instance_ = instance; }
   void set_window_name(const char window_name);
   HWND get_window_handle() { return window_handle_; }
@@ -65,7 +67,21 @@ class Window {
   bool IsFocused() { return is_focused_; }
   bool IsActive() { return is_active_; }
 
+  f32 width() {
+    update_temp_rect();
+    return temp_rect_.right;
+  }
+
+  f32 height() {
+    update_temp_rect();
+    return temp_rect_.bottom;
+  }
+
  private:
+  void update_temp_rect() { GetClientRect(window_handle_, &temp_rect_); }
+
+  RECT temp_rect_;
+
   bool is_init_;
 
   HWND window_handle_;

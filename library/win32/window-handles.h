@@ -5,12 +5,12 @@
 
 #define WIN_HANDLES_SIZE 32
 
-namespace util {
+namespace core {
 class Window;
 
 struct WindowHandleAssoc {
   HWND hwnd;
-  util::Window* window;
+  core::Window* window;
 };
 
 // We use a simple unsorted array to associate handles with
@@ -20,7 +20,7 @@ class WindowHandles {
   WindowHandles();
 
   // Add association to array.
-  void Add(HWND hwnd, util::Window* window);
+  void Add(HWND hwnd, core::Window* window);
 
   // Get Window that had handle hwnd.
   // Returns NULL if no window is found.

@@ -1,6 +1,6 @@
 #include "window-handles.h"
 
-namespace util {
+namespace core {
 
 WindowHandles::WindowHandles() : size_(0) {
 }

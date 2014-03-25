@@ -1,10 +1,11 @@
 #include "window.h"
+using namespace util;
 
-namespace util {
+namespace core {
 
 LRESULT CALLBACK
 DefaultWin32Proc(HWND window_handle, UINT umsg, WPARAM wparam, LPARAM lparam) {
-  util::Window* window =
+  core::Window* window =
       Singleton<WindowHandles>::Instance().Get(window_handle);
 
   switch (umsg) {
@@ -53,7 +54,6 @@ Window::Window(void)
 Window::~Window(void) {}
 
 bool Window::Init(const char* window_title, const char* class_name) {
-  Logger& log = Singleton<Logger>::Instance();
 
   if (instance_ && !is_init_) {
     ZeroMemory(&window_class_, sizeof(WNDCLASSEX));
