@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
       window.Destroy();
     } else {
       if (event_type == core::kExpose)
-        glViewport(window.x(), window.y(), window.width(), window.height());
+        glViewport(0, 0, window.width(), window.height());
 
       glClearColor(0.0, 0.0, 0.0, 1.0);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
