@@ -103,8 +103,8 @@ bool Window::Init(const char* window_title, const char* class_name) {
             0,
             0,
             0,
-            16,  // Depth Buffer
-            0,
+            24,  // Depth Buffer
+            8, // Stencil buffer
             0,
             PFD_MAIN_PLANE,
             0,
@@ -124,6 +124,15 @@ bool Window::Init(const char* window_title, const char* class_name) {
 
             if (opengl_render_context_)
               if (wglMakeCurrent(gdi_device_context_, opengl_render_context_)) {
+                // Load up extensions.
+                GLenum err = glewInit();
+                if (err != GLEW_OK) {
+                  log << util::kLogDateTime << ": "
+                      << (char*) glewGetErrorString(err) << "\n";
+                  Destroy();
+                  return false;
+                }
+
                 ShowWindow(window_handle_, SW_SHOW);
                 SetForegroundWindow(window_handle_);
                 SetFocus(window_handle_);
@@ -188,14 +197,14 @@ void Window::Destroy() {
   }
 
   if (window_handle_) {
-    // ! Singleton<WindowHandles>::Instance().Remove(window_handle_);
+    Singleton<WindowHandles>::Instance().Remove(window_handle_);
     DestroyWindow(window_handle_);
     window_handle_ = 0;
   }
 
-  if (instance_) {
-    UnregisterClass("ObsidianClass", instance_);
-    instance_ = 0;
+  if (window_class_.hInstance) {
+    UnregisterClass(window_class_.lpszClassName, window_class_.hInstance);
+    ZeroMemory(&window_class_, sizeof(WNDCLASSEX));
   }
 
   is_init_ = false;
