@@ -4,9 +4,11 @@
 #ifndef OBSIDIAN_TEXTURE_H_
 #define OBSIDIAN_TEXTURE_H_
 
+#include "logger.h"
+
 namespace resource {
 
-class TextureAbstract {
+class TextureAbstract : public util::HasLog {
  public:
   typedef unsigned char byte;
 

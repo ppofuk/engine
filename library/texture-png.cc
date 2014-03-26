@@ -16,14 +16,18 @@ bool TexturePng::Load(const char* file) {
 
   FILE* file_pointer;
 
-  if ((file_pointer = fopen(file, "rb")) == NULL)
+  if ((file_pointer = fopen(file, "rb")) == NULL) {
+    log << util::kLogDateTime << ": TexturePng: cannot open file " << file
+        << "\n";
     return false;
+  }
 
   // Some init crap from tutorial.
   png_pointer = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
   if (png_pointer == NULL) {
     fclose(file_pointer);
+    log << util::kLogDateTime << ": TexturePng: " << file << " is not png!\n";
     return false;
   }
 
@@ -65,9 +69,8 @@ bool TexturePng::Load(const char* file) {
     gl_alpha_ = 3;
   } else {
     // TODO(pero): error handler implementation
-    fprintf(stderr,
-            "TexturePng at %p, ::Load, reports color type is not supported\n",
-            (void*)this);
+    log << util::kLogDateTime
+        << "TexturePng::Load, reports color type is not supported\n",
     fclose(file_pointer);
     // Check for png_ structs deallocation
     return false;
