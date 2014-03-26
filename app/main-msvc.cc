@@ -11,11 +11,23 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
   app::SimpleShader simple_shader;
 
   window.set_instance(instance);
+  window.Init();
+  window.Destroy();
+  window.set_instance(instance);
 
   if (window.Init()) {
-    util::Reader<char>::Chdir("../../");
+    // This is only for testing.
+    if (!util::Reader<char>::IsReadable("resources/actor.png")) {
+      util::Reader<char>::Chdir("../../");
+      if (!util::Reader<char>::IsReadable("resources/actor.png")) {
+        window.log << util::kLogDateTime
+                   << "resources/actor.png or "
+                   << "../../resources.actor.png don not exist!\n";
+        window.Destroy();
+        return 0;
+      }
+    }
 
-    glewInit();
     simple_shader.Init();
 
     glViewport(0, 0, window.width(), window.height());
