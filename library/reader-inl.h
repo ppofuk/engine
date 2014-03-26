@@ -94,6 +94,16 @@ class Reader {
     return path;
   }
 
+  static bool IsReadable(const char* path) {
+    FILE* file = fopen(path, "r");
+    if (file) {
+      fclose(file);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
  private:
   char path_[2048];
   FILE* file_;
