@@ -8,6 +8,7 @@
       'target_name': 'library',
       'type': '<(library)',
       'defines': [
+        'LIBRARY_EXPORT'
       ],
       'include_dirs': [
         '.',

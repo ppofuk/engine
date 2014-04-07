@@ -19,27 +19,27 @@ typedef int32_t i32;
 typedef int64_t i64;
 
 #else // defines(OS_LINUX)
-#ifdef _MSC_VER 
+#ifdef _MSC_VER
 #include <xmmintrin.h>
-typedef __declspec(deprecated) float f32_t; 
+typedef __declspec(deprecated) float f32_t;
 typedef __declspec(deprecated) unsigned __int8 u8_t;
 typedef __declspec(deprecated) unsigned __int16 u16_t;
-typedef __declspec(deprecated) unsigned __int32 u32_t; 
-typedef __declspec(deprecated) unsigned __int64 u64_t; 
-typedef __declspec(deprecated) __int8 i8_t; 
-typedef __declspec(deprecated) __int16 i16_t; 
-typedef __declspec(deprecated) __int32 i32_t; 
+typedef __declspec(deprecated) unsigned __int32 u32_t;
+typedef __declspec(deprecated) unsigned __int64 u64_t;
+typedef __declspec(deprecated) __int8 i8_t;
+typedef __declspec(deprecated) __int16 i16_t;
+typedef __declspec(deprecated) __int32 i32_t;
 typedef __declspec(deprecated) __int64 i64_t;
 typedef __declspec(deprecated) __m128 vf32_t;
 
-typedef float f32; 
+typedef float f32;
 typedef unsigned __int8 u8;
 typedef unsigned __int16 u16;
-typedef unsigned __int32 u32; 
-typedef unsigned __int64 u64; 
-typedef __int8 i8; 
-typedef __int16 i16; 
-typedef __int32 i32; 
+typedef unsigned __int32 u32;
+typedef unsigned __int64 u64;
+typedef __int8 i8;
+typedef __int16 i16;
+typedef __int32 i32;
 typedef __int64 i64;
 typedef __m128 vf32;
 

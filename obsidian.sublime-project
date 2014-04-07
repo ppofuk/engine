@@ -56,7 +56,8 @@
         "-I", "D:\\src\\obsidian\\third-party\\zlib",
         "-I", "D:\\src\\obsidian\\third-party\\gtest\\include",
 
-        "-ferror-limit=0"
+        "-ferror-limit=0",
+        "-DLIBRARY_EXPORT"
     ]
   }
 }

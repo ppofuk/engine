@@ -1,12 +1,12 @@
 #ifndef OBSIDIAN_SINGLETON_H_
 #define OBSIDIAN_SINGLETON_H_
 
-// Creates a singleton of a type.
-template<class type>
+// Creates a singleton of a Type.
+template<class Type>
 class Singleton {
  public:
-   static type& Instance() {
-     static type instance;
+   static Type& Instance() {
+     static Type instance;
      return instance;
    }
 
