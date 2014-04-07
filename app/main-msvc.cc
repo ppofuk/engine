@@ -10,6 +10,7 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
   core::Window window;
   app::SimpleShader simple_shader;
 
+
   window.set_instance(instance);
   window.Init();
   window.Destroy();
@@ -22,7 +23,7 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
       if (!util::Reader<char>::IsReadable("resources/actor.png")) {
         window.log << util::kLogDateTime
                    << "resources/actor.png or "
-                   << "../../resources.actor.png don not exist!\n";
+                   << "../../resources.actor.png do not exist!\n";
         window.Destroy();
         return 0;
       }
