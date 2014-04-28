@@ -5,30 +5,87 @@
 #define OBSIDIAN_GL_UNIFORM_H_
 
 #include "GL/glew.h"
+
+#include "gl-program.h"
+#include "../static-compile-options.h"
+
 namespace render {
 
-template <typename Type>
-class GLUniform {
+namespace intern {
+
+class GLUniformBase {
  public:
-  GLUniform(Type& variable, const char* name, GLuint program)
-      : variable_(variable), name_(name), program_(program) {
-    location_ = glGetUniformLocation(program_, name);
-  }
+  GLUniformBase();
+  // Locate a new or existing uniform variable of uniform_name in program.
+  // This method should be always called.
+  void Locate(const render::GLProgram& program, const char* uniform_name);
 
-  Type& variable() { return variable_; }
-  void value(Type value) { variable_ = value; }
-  const char* name() { return name; }
-  GLuint program() const { return program_; }
-  GLint location() { return location_; }
+  GLint get_location() const { return location_; }
+  void set_location(const GLint location) { location_ = location; }
+  const char* get_uniform_name() const { return uniform_name_; }
 
-  void Uniform1f() { glUniform1f(location_, variable_); }
-  void Uniform1i() { glUniform1i(location_, variable_); }
+  virtual ~GLUniformBase() {}
 
- private:
-  Type& variable_;
+  // Pass method is a wraper around glUniform... function.
+
+
+ protected:
+  char uniform_name_[kUniformNameSize];
   GLint location_;
-  const char* name_;
   GLuint program_;
+};
+
+}  // namespace intern
+
+template <typename T>
+class GLUniform : public intern::GLUniformBase {
+ public:
+  typedef void Type;
+  GLUniform() : intern::GLUniformBase() {}
+};
+
+template <>
+class GLUniform<GLfloat> : public intern::GLUniformBase {
+ public:
+  typedef GLfloat Type;
+  GLUniform() : intern::GLUniformBase() {}
+  void Pass(GLfloat value) { glUniform1f(location_, value); }
+};
+
+template <>
+class GLUniform<GLint> : public intern::GLUniformBase {
+ public:
+  typedef GLint Type;
+  GLUniform() : intern::GLUniformBase() {}
+  void Pass(GLint value) { glUniform1i(location_, value); }
+};
+
+template <>
+class GLUniform<GLuint> : public intern::GLUniformBase {
+ public:
+  typedef GLint Type;
+  GLUniform() : intern::GLUniformBase() {}
+  void Pass(GLuint value) { glUniform1ui(location_, value); }
+};
+
+template <>
+class GLUniform<GLfloat*> : public intern::GLUniformBase {
+ public:
+  typedef GLfloat* Type;
+  GLUniform() : intern::GLUniformBase() {}
+  void Pass(GLfloat* values, size_t count) {
+    glUniform1fv(location_, count, values);
+  }
+};
+
+template <>
+class GLUniform<GLint*> : public intern::GLUniformBase {
+ public:
+  typedef GLint* Type;
+  GLUniform() : intern::GLUniformBase() {}
+  void Pass(GLint* values, size_t count) {
+    glUniform1iv(location_, count, values);
+  }
 };
 
 }  //  namespace render
