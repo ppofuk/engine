@@ -62,16 +62,14 @@ class Reader {
     if (!data_)
       return NULL;
 
-    if (fread(data_,
-              sizeof(Type),
-              file_size_ / sizeof(Type),
-              file_) != file_size_) {
+    if (fread(data_, sizeof(Type), file_size_ / sizeof(Type), file_) !=
+        file_size_) {
       Logger& log = Singleton<Logger>::Instance();
       log << kLogDateTime << ": Read error on " << path_ << "!\n";
     }
 
     if (!binary) {
-      data_[file_size_] = 0; // Presume we are using chars
+      data_[file_size_] = 0;  // Presume we are using chars
     }
 
     return data_;
@@ -84,9 +82,7 @@ class Reader {
     return file_size_;
   }
 
-  static void Chdir(const char* path) {
-    chdir(path);
-  }
+  static void Chdir(const char* path) { chdir(path); }
 
   static char* Cwd() {
     static char path[2048];
@@ -111,6 +107,8 @@ class Reader {
   Type* data_;
 };
 
-} // namespace util
+typedef Reader<char> ByteReader;
 
-#endif // OBSIDIAN_READER_H_
+}  // namespace util
+
+#endif  // OBSIDIAN_READER_H_
