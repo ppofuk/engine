@@ -30,7 +30,7 @@
         'texture-png.h',
         'texture-png.cc',
         'reader-inl.h',
-        # OpenGL stuff
+        # OpenGL stuff:
         'gl/gl-texture.cc',
         'gl/gl-texture.h',
         'gl/gl-buffer.h',
@@ -39,7 +39,11 @@
         'gl/gl-shader.h',
         'gl/gl-shader.cc',
         'gl/gl-texture.h',
-        'gl/gl-texture.cc'
+        'gl/gl-texture.cc',
+        'gl/gl-uniform.h',
+        'gl/gl-uniform.cc',
+        'gl/gl-attribute.h',
+        'gl/gl-attribute.cc'
       ],
       'direct_dependent_settings': {
         'include_dirs': ['.'],
