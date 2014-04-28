@@ -5,8 +5,6 @@
 #define OBSIDIAN_GL_PROGRAM_H_
 
 #include "gl-shader.h"
-#include "gl-uniform.h"
-#include "gl-attribute.h"
 #include <string.h>
 
 namespace render {
@@ -42,14 +40,6 @@ class GLProgram {
 
   // Use the program.
   void Use();
-
-  // Creates and returns an uniform variable for this program.
-  template<typename Type>
-  GLUniform<Type> Uniform(Type& attribute, const char* name);
-
-  // Creates and returns an attribute variable for this program.
-  template<typename Type>
-  GLAttribute<Type> Attribute(Type& attribute, const char* name);
 
   bool is_vaild() const { return vaild_; }
   GLuint get_program() const { return program_; }
