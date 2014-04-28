@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #include "gl-texture.h"
+#include <assert.h>
 
 namespace render {
 
@@ -15,6 +16,8 @@ GLTexture::GLTexture()
       texture_abstract_(0) {}
 
 void GLTexture::Generate() {
+  assert(texture_abstract_->get_texture_data() != NULL);
+
   glGenTextures(1, &gl_texture_);
   glBindTexture(GL_TEXTURE_2D, gl_texture_);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_min_filter_);
