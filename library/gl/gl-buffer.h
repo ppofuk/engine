@@ -64,14 +64,16 @@ class GLBuffer<void> {
   const GLBufferBase& buffer_base() const { return buffer_base_; }
 
   template <typename U>
-  bool Equal(const GLBuffer<U>& buffer) {
+  bool Equal(const GLBuffer<U>& buffer) const {
     return (buffer_base_ == buffer.buffer_base());
   }
 
   // Returns the actual size of pointed array in bytes.
   virtual size_t size() const { return buffer_base_.get_size(); }
 
-  virtual inline void* get_offset(size_t offset) { return (void*)(offset); }
+  virtual inline void* get_offset(size_t offset) const {
+    return (void*)(offset);
+  }
 
  protected:
   GLBufferBase buffer_base_;
@@ -79,6 +81,7 @@ class GLBuffer<void> {
 
 template <>
 class GLBuffer<GLfloat> : public GLBuffer<void> {
+ public:
   // Create a new buffer that holds GLfloat type.
   // |size| is the number of elements, not the memory size in bytes.
   void Create(GLenum type, GLenum usage, GLfloat* data, size_t size) {
@@ -91,13 +94,14 @@ class GLBuffer<GLfloat> : public GLBuffer<void> {
   // or multiply the returned value from this method by sizeof(GLfloat).
   size_t size() const { return buffer_base_.get_size() / sizeof(GLfloat); }
 
-  inline void* get_offset(size_t offset) {
+  inline void* get_offset(size_t offset) const {
     return (void*)(offset * sizeof(GLfloat));
   }
 };
 
 template <>
 class GLBuffer<GLint> : public GLBuffer<void> {
+ public:
   // Create a new buffer that holds GLint type.
   // |size| is the number of elements, not the memory size in bytes.
   void Create(GLenum type, GLenum usage, GLint* data, size_t size) {
@@ -110,13 +114,14 @@ class GLBuffer<GLint> : public GLBuffer<void> {
   // or multiply the returned value from this method by sizeof(GLint).
   size_t size() const { return buffer_base_.get_size() / sizeof(GLint); }
 
-  inline void* get_offset(size_t offset) {
+  inline void* get_offset(size_t offset) const {
     return (void*)(offset * sizeof(GLint));
   }
 };
 
 template <>
 class GLBuffer<GLushort> : public GLBuffer<void> {
+ public:
   // Create a new buffer that holds GLushort type.
   // |size| is the number of elements, not the memory size in bytes.
   void Create(GLenum type, GLenum usage, GLushort* data, size_t size) {
@@ -129,29 +134,28 @@ class GLBuffer<GLushort> : public GLBuffer<void> {
   // or multiply the returned value from this method by sizeof(GLushort).
   size_t size() const { return buffer_base_.get_size() / sizeof(GLushort); }
 
-  inline void* get_offset(size_t offset) {
+  inline void* get_offset(size_t offset) const {
     return (void*)(offset * sizeof(GLushort));
   }
 };
-
 
 // Helper functions that call GLBuffer<T>::Create(type, usage, data, size)
 // method with type value correlated to function name (vertex buffer, element
 // buffer)
 template <typename T>
-void CreateVertexBuffer(const GLBuffer<T>& buffer,
+void CreateVertexBuffer(GLBuffer<T>* buffer,
                         GLenum usage,
                         T* data,
                         size_t size) {
-  buffer.Create(GL_ARRAY_BUFFER, usage, data, size);
+  buffer->Create(GL_ARRAY_BUFFER, usage, data, size);
 }
 
 template <typename T>
-void CreateElementBuffer(const GLBuffer<T>& buffer,
+void CreateElementBuffer(GLBuffer<T>* buffer,
                          GLenum usage,
                          T* data,
                          size_t size) {
-  buffer.Create(GL_ELEMENT_ARRAY_BUFFER, usage, data, size);
+  buffer->Create(GL_ELEMENT_ARRAY_BUFFER, usage, data, size);
 }
 
 }  //  namespace render
