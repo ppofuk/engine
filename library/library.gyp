@@ -34,6 +34,7 @@
         'gl/gl-texture.cc',
         'gl/gl-texture.h',
         'gl/gl-buffer.h',
+        'gl/gl-buffer.cc',
         'gl/gl-program.h',
         'gl/gl-program.cc',
         'gl/gl-shader.h',
