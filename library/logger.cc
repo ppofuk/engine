@@ -1,27 +1,25 @@
 #include "logger.h"
+#include "static-compile-options.h"
 
 namespace util {
 
-Logger::Logger(void) { file_ = fopen("log.txt", "a"); }
+Logger::Logger() { file_ = fopen(log_path_file, "a"); }
 
-Logger::~Logger(void) { fclose(file_); }
+Logger::~Logger() { fclose(file_); }
 
 void Logger::Log(const char* msg) {
-  FILE* file = Singleton<Logger>::Instance().get_file();
-  fputs(msg, file);
+  fputs(msg, file_);
   fputs(msg, stdout);
-  fflush(file);
+  fflush(file_);
 }
 
 void Logger::Log(int msg) {
-  FILE* file = Singleton<Logger>::Instance().get_file();
-  fprintf(file, "%d", msg);
+  fprintf(file_, "%d", msg);
   fprintf(stdout, "%d", msg);
 }
 
 void Logger::Log(float msg) {
-  FILE* file = Singleton<Logger>::Instance().get_file();
-  fprintf(file, "%f", msg);
+  fprintf(file_, "%f", msg);
   fprintf(stdout, "%f", msg);
 }
 

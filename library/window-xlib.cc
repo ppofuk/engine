@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #include "window-xlib.h"
+
 namespace core {
 
 WindowXlib::WindowXlib() : is_init_(false) {
@@ -56,14 +57,25 @@ void WindowXlib::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
   glx_context_ = glXCreateContext(display_, visual_info_, NULL, GL_TRUE);
   glXMakeCurrent(display_, window_, glx_context_);
 
+  is_init_ = true;
+
+  GLenum err = glewInit();
+  if (err != GLEW_OK) {
+    log << util::kLogDateTime << ": " << (char*)glewGetErrorString(err) << "\n";
+    Destroy();
+    return;
+  }
+
   glEnable(GL_DEPTH_TEST);  // TODO(ppofuk): Move?
 
   char* gl_version = (char*)glGetString(GL_VERSION);
   char* gl_vendor = (char*)glGetString(GL_VENDOR);
   char* gl_renderer = (char*)glGetString(GL_RENDERER);
-  printf("OpenGL %s on %s, %s\n", gl_version, gl_renderer, gl_vendor);
-
-  is_init_ = true;
+  log << util::kLogDateTime << ": "
+      << "GL Context created\n" << util::kLogDateTime << ": "
+      << "GL version: " << gl_version << "\n" << util::kLogDateTime << ": "
+      << "GL vendor: " << gl_vendor << "\n" << util::kLogDateTime << ": "
+      << "GL renderer: " << gl_renderer << "\n";
 }
 
 void WindowXlib::Destroy() {

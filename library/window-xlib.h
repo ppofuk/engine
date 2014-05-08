@@ -8,11 +8,11 @@
 #include <stdlib.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
-#include <GL/gl.h>
+#include "GL/glew.h"
 #include <GL/glx.h>
-#include <GL/glu.h>
 
 #include "basic-types.h"
+#include "logger.h"
 
 namespace core {
 
@@ -24,7 +24,7 @@ enum WindowEventType {
   kNone
 };
 
-class WindowXlib {
+class WindowXlib : public util::HasLog {
  public:
   WindowXlib();
 

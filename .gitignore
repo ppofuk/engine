@@ -3,6 +3,9 @@ out/
 obj/
 build/
 
+app/Release/
+app/Debug/
+
 Release/
 Debug/
 

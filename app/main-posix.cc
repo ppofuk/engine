@@ -4,22 +4,39 @@
 
 #include "GL/glew.h"
 #include "window-xlib.h"
-#include "simple-shader.h"
+#include "reader-inl.h"
+#include "gl/gl-buffer.h"
+
+#include "test-shader.h"
 
 #include <stdio.h>
 #include <unistd.h>
 
 int main(int argc, char* argv[]) {
   core::WindowXlib window;
-  app::SimpleShader simple_shader;
+  app::SimpleShaderTest simple_shader_test;
 
   window.Init("app test");
 
   if (window.is_init()) {
-    util::Reader<char>::Chdir("../../");
+    if (!util::Reader<char>::IsReadable("resources/actor.png")) {
+      util::Reader<char>::Chdir("../../");
+      if (!util::Reader<char>::IsReadable("resources/actor.png")) {
+        window.log << util::kLogDateTime << "resources/actor.png or "
+                   << "../../resources/actor.png don not exist!\n";
+        window.Destroy();
+        return 0;
+      }
+    }
 
     glewInit();
-    simple_shader.Init();
+
+    simple_shader_test.ReadResources("resources/simple-vertex.vs",
+                                     "resources/simple-fragment.vs",
+                                     "resources/actor.png");
+    simple_shader_test.InitBuffersAndTextures();
+    simple_shader_test.InitShaders();
+    simple_shader_test.InitProgram();
   }
 
   while (window.is_init()) {
@@ -30,12 +47,12 @@ int main(int argc, char* argv[]) {
       window.Destroy();
     } else {
       if (event_type == core::kExpose)
-        glViewport(window.x(), window.y(), window.width(), window.height());
+        glViewport(0, 0, window.width(), window.height());
 
       glClearColor(0.0, 0.0, 0.0, 1.0);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      simple_shader.Render();
+      simple_shader_test.Render();
 
       window.Postrender();
       usleep(10);

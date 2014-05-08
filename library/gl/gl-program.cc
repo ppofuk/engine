@@ -52,16 +52,4 @@ void GLProgram::DetachShader(GLShader& shader) {
   glDetachShader(program_, shader.get_shader());
 }
 
-template<typename Type>
-GLUniform<Type> GLProgram::Uniform(Type& attribute, const char* name) {
-  GLUniform<Type> uniform(attribute, name, program_);
-  return uniform;
-}
-
-template<typename Type>
-GLAttribute<Type> GLProgram::Attribute(Type& attribute, const char* name) {
-  GLUniform<Type> ret_attribute(attribute, name, program_);
-  return ret_attribute;
-}
-
 } //  namespace render

@@ -22,9 +22,7 @@
               '/WX'
             ],
             'sources': [
-              'main-msvc.cc',
-              'simple-shader.h',
-              'simple-shader.cc'
+              'main-msvc.cc'
             ],
             'libraries': [
               '-lopengl32.lib',
@@ -44,7 +42,7 @@
           ['OS=="linux"', {
             'sources': [
               'main-posix.cc',
-              'simple-shader.cc'
+              'test-shader.cc'
             ],
             'cflags': [
               '-Wall',

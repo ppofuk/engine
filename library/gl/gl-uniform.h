@@ -5,29 +5,33 @@
 #define OBSIDIAN_GL_UNIFORM_H_
 
 #include "GL/glew.h"
+
+#include "gl-program.h"
+#include "../static-compile-options.h"
+
 namespace render {
 
-template <typename Type>
 class GLUniform {
  public:
-  GLUniform(Type& variable, const char* name, GLuint program)
-      : variable_(variable), name_(name), program_(program) {
-    location_ = glGetUniformLocation(program_, name);
-  }
+  GLUniform();
+  // Locate a new or existing uniform variable of uniform_name in program.
+  // This method should be always called.
+  void Locate(const render::GLProgram& program, const char* uniform_name);
 
-  Type& variable() { return variable_; }
-  void value(Type value) { variable_ = value; }
-  const char* name() { return name; }
-  GLuint program() const { return program_; }
-  GLint location() { return location_; }
+  GLint get_location() const { return location_; }
+  void set_location(const GLint location) { location_ = location; }
+  const char* get_uniform_name() const { return uniform_name_; }
 
-  void Uniform1f() { glUniform1f(location_, variable_); }
-  void Uniform1i() { glUniform1i(location_, variable_); }
+  // Pass method is a wraper around glUniform... function.
+  void Pass(GLfloat value);
+  void Pass(GLint value);
+  void Pass(GLuint value);
+  void Pass(GLfloat* values, size_t count);
+  void Pass(GLint* values, size_t count);
 
- private:
-  Type& variable_;
+ protected:
+  char uniform_name_[kUniformNameSize];
   GLint location_;
-  const char* name_;
   GLuint program_;
 };
 
