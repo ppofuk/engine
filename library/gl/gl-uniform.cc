@@ -16,6 +16,7 @@ void GLUniform::Locate(const render::GLProgram& program,
   assert(strlen(uniform_name) < kUniformNameSize - 1);
   memcpy(uniform_name_, uniform_name, kUniformNameSize);
   location_ = glGetUniformLocation(program_, uniform_name_);
+  assert(location_ != -1);
 }
 
 void GLUniform::Pass(GLfloat value) { glUniform1f(location_, value); }
