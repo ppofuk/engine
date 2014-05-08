@@ -17,6 +17,7 @@ void GLAttributeBase::Locate(const render::GLProgram& program,
   assert(strlen(attrib_name) < kAttribNameSize - 1);
   memcpy(attrib_name_, attrib_name, kAttribNameSize);
   location_ = glGetAttribLocation(program_, attrib_name_);
+  assert(location_ != -1);
 }
 
 }  // namespace intern
