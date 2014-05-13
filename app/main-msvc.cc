@@ -4,12 +4,12 @@
 #include "GL/glew.h"
 
 #include "win32/window.h"
-#include "simple-shader.h"
+#include "test-shader.h"
+#include "reader-inl.h"
 
 INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
   core::Window window;
-  app::SimpleShader simple_shader;
-
+  app::SimpleShaderTest simple_shader;
 
   window.set_instance(instance);
   window.Init();
@@ -29,7 +29,13 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
       }
     }
 
-    simple_shader.Init();
+    // Init test shader here
+    simple_shader.ReadResources("resources/simple-vertex.vs",
+                                "resources/simple-fragment.vs",
+                                "resources/actor.png");
+    simple_shader.InitBuffersAndTextures();
+    simple_shader.InitShaders();
+    simple_shader.InitProgram();
 
     glViewport(0, 0, window.width(), window.height());
   }
@@ -54,7 +60,6 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
     Sleep(10);
   }
 
-  simple_shader.Destroy();
   window.Destroy();
   return 0;
 }
