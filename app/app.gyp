@@ -22,7 +22,8 @@
               '/WX'
             ],
             'sources': [
-              'main-msvc.cc'
+              'main-msvc.cc',
+              'test-shader.cc'
             ],
             'libraries': [
               '-lopengl32.lib',
