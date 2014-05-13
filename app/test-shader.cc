@@ -49,7 +49,7 @@ void SimpleShaderTest::InitBuffersAndTextures() {
   render::CreateVertexBuffer(
       &vertex_buffer_, GL_STATIC_DRAW, vertex_buffer_data, 16);
 
-  render::CreateVertexBuffer(
+  render::CreateElementBuffer(
       &element_buffer_, GL_STATIC_DRAW, element_buffer_data, 4);
 
   texture_.set_texture_abstract(&texture_loader_);
@@ -94,12 +94,12 @@ void SimpleShaderTest::Render() {
 
   vertex_buffer_.Bind();
   position_attribute_.PassVertexPointer(vertex_buffer_, 4);
+
   position_attribute_.Enable();
 
   element_buffer_.Bind();
 
   glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, (void*)0);
-  log << util::kLogDateTime << " glDrawElements(GL_TRIANGLE_STRIP, 4, ...)\n";
 
   position_attribute_.Disable();
 
