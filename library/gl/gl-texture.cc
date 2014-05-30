@@ -16,6 +16,7 @@ GLTexture::GLTexture()
       texture_abstract_(0) {}
 
 void GLTexture::Generate() {
+  assert(texture_abstract_ != NULL);
   assert(texture_abstract_->get_texture_data() != NULL);
 
   glGenTextures(1, &gl_texture_);
