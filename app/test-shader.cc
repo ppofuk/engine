@@ -105,5 +105,8 @@ void SimpleShaderTest::Render() {
 
 }
 
+void SimpleShaderTest::Destroy() {
+  texture_loader_.Destroy();
+}
 
 }  // namespace app

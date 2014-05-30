@@ -26,6 +26,7 @@ class SimpleShaderTest : util::HasLog {
   void InitBuffersAndTextures();
   void InitProgram();
   void Render();
+  void Destroy();
 
  private:
   render::GLBuffer<GLfloat> vertex_buffer_;
