@@ -59,5 +59,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
+  simple_shader_test.Destroy();
+
   return 0;
 }
