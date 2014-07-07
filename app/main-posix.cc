@@ -31,7 +31,8 @@ int main(int argc, char* argv[]) {
 
     glewInit();
 
-    simple_shader_test.ReadResources("resources/simple-vertex.vs",
+    simple_shader_test.ReadResources("resources/base-vertex.vs",
+                                     "resources/simple-vertex.vs",
                                      "resources/simple-fragment.vs",
                                      "resources/actor.png");
     simple_shader_test.InitBuffersAndTextures();
@@ -46,8 +47,10 @@ int main(int argc, char* argv[]) {
         event_type == core::kWindowDelete || event_type == core::kKeyPress) {
       window.Destroy();
     } else {
-      if (event_type == core::kExpose)
+      if (event_type == core::kExpose) {
         glViewport(0, 0, window.width(), window.height());
+        simple_shader_test.set_aspect_ratio(window.width() / window.height());
+      }
 
       glClearColor(0.0, 0.0, 0.0, 1.0);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
