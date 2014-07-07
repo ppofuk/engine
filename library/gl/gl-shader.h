@@ -11,11 +11,6 @@
 #include <stdlib.h>
 
 namespace render {
-
-// GLShader extendes the LinkNode class so it can be used as a node in linked
-// list.
-// To see how it's done, refree to linked-list.h
-//
 // This class represents a GLSL shader, defined as an char* source.
 class GLShader : public util::HasLog {
  public:
@@ -39,7 +34,7 @@ class GLShader : public util::HasLog {
   // After linking the program it's safe to call shader deletion.
   void Delete();
 
-  // If you wish to recompile and existing shader, use one of this methods with
+  // If you wish to recompile an existing shader, use one of this methods with
   // get_shader_source() method.
   // For example:
   //   MyShader.CreateVertexShader((const char*)MyShader.get_shader_source());
@@ -53,7 +48,6 @@ class GLShader : public util::HasLog {
   char info_log_[4098];
 };
 
-} //  namespace render
-
+}  //  namespace render
 
 #endif
