@@ -14,23 +14,27 @@ namespace resource {
 // Before calling any rendering operation of sprite be sure to apply an
 // instanced implementation of TextureAbstract class (e.g. TexturePng defined in
 // texure-png.h). Also don't forget to set at least |properties.width| and
-// |properties.height|. You can do that by calling |properties.Set| method, for
-// example.
+// |properties.height|. You can do that by calling |properties.Set| or
+// |set_texture| method, for example:
 //   TexturePng texture;
 //   texture.Load("texture.png");
 //   Sprite sprite;
 //   Sprite.set_texture(&texture);
-//   Sprite.properties.Set(&texture);
 class Sprite {
  public:
   Sprite();
-  SpriteProperties properties;
 
   TextureAbstract* get_texture() const { return texture_; }
-  void set_texture(TextureAbstract* texture) { texture_ = texture; }
+  void set_texture(TextureAbstract* texture) {
+    texture_ = texture;
+    properties_.Set(texture);
+  }
+
+  const SpriteProperties& properties() const { return properties_; }
 
  private:
   TextureAbstract* texture_;
+  SpriteProperties properties_;
 };
 
 }  // namespace resource
