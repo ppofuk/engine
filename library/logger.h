@@ -8,7 +8,7 @@
 
 namespace util {
 
-// Enums useed in conjuction with Loggers << operator.
+// Enums useed in conjunction with Loggers << operator.
 // For example, to log current date/time do the following:
 //  Logger log;
 //  log << Type::kDateTime << " <- this is the time. ";
@@ -26,40 +26,47 @@ class Logger {
   ~Logger();
 
   // Stream to file.
-  void Log(const char* msg);
+  void Log(const char* msg) const;
 
-  void Log(int msg);
+  void Log(int msg) const;
 
-  void Log(float msg);
+  void Log(float msg) const;
 
   // Getters and setters.
-  FILE* get_file() { return file_; }
+  FILE* get_file() const { return file_; }
 
-  template<typename Type> char* Address(Type& var) {
+  template<typename Type> char* Address(Type& var) const {
     static char address[18];
     sprintf(address, "%p", (void*)var);
     return address;
   }
 
   // operators.
-  Logger& operator<<(const char* rhs);
+  const Logger& operator<<(const char* rhs) const;
 
-  Logger& operator<<(int rhs);
+  const Logger& operator<<(int rhs) const;
 
-  Logger& operator<<(float rhs);
+  const Logger& operator<<(float rhs) const;
 
-  Logger& operator<<(LoggerType rhs);
+  const Logger& operator<<(LoggerType rhs) const;
 
-  Logger& operator<<(size_t rhs);
+  const Logger& operator<<(size_t rhs) const;
 
  private:
   FILE* file_;
 };
 
+// Best way to safely use the Log class is by inheriting HasLog class to your
+// class.
+// For example:
+// class MyClass : public HasLog {
+//  public:
+//   MyClass() { log << "Hello from MyClass()\n"; }
+// }
 class HasLog {
  public:
   HasLog();
-  Logger& log;
+  const Logger& log;
 };
 
 } //  namespace util
