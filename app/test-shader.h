@@ -18,7 +18,8 @@ namespace app {
 class SimpleShaderTest : util::HasLog {
  public:
   SimpleShaderTest();
-  bool ReadResources(const char* vertex_shader_path,
+  bool ReadResources(const char* base_vertex_path,
+                     const char* vertex_shader_path,
                      const char* pixel_shader_path,
                      const char* texture_png_path);
 
@@ -27,6 +28,8 @@ class SimpleShaderTest : util::HasLog {
   void InitProgram();
   void Render();
   void Destroy();
+
+  void set_aspect_ratio(float aspect_ratio) { aspect_ratio_ = aspect_ratio; }
 
  private:
   render::GLBuffer<GLfloat> vertex_buffer_;
@@ -37,10 +40,13 @@ class SimpleShaderTest : util::HasLog {
   render::GLProgram program_;
   render::GLAttribute<render::GLBuffer<GLfloat> > position_attribute_;
   render::GLUniform texture_uniform_;
+  render::GLUniform aspect_uniform_;
   resource::TexturePng texture_loader_;
   char vertex_shader_source_[4096];
   char pixel_shader_source_[4096];
   bool all_init_;
+
+  float aspect_ratio_;
 };
 
 }  // namespace app

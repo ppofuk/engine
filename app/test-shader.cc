@@ -6,12 +6,15 @@
 
 namespace app {
 
-SimpleShaderTest::SimpleShaderTest() : all_init_(false) {}
+SimpleShaderTest::SimpleShaderTest()
+    : all_init_(false), aspect_ratio_(4.0f / 3.0f) {}
 
-bool SimpleShaderTest::ReadResources(const char* vertex_shader_path,
+bool SimpleShaderTest::ReadResources(const char* base_vertex_path,
+                                     const char* vertex_shader_path,
                                      const char* pixel_shader_path,
                                      const char* texture_png_path) {
   util::ByteReader reader;
+
   reader.set_data(vertex_shader_source_);
   reader.set_path(vertex_shader_path);
   reader.Open();
@@ -53,6 +56,10 @@ void SimpleShaderTest::InitBuffersAndTextures() {
       &element_buffer_, GL_STATIC_DRAW, element_buffer_data, 4);
 
   texture_.set_texture_abstract(&texture_loader_);
+  // Some texture experiments
+  texture_.set_gl_mag_filter(GL_NEAREST);
+  texture_.set_gl_min_filter(GL_NEAREST);
+
   texture_.Generate();
 }
 
@@ -82,11 +89,14 @@ void SimpleShaderTest::InitProgram() {
 
   position_attribute_.Locate(program_, "position");
   texture_uniform_.Locate(program_, "texture");
+  aspect_uniform_.Locate(program_, "aspect");
   log << util::kLogDateTime << " Program linked successfuly!\n";
 }
 
 void SimpleShaderTest::Render() {
   program_.Use();
+
+  aspect_uniform_.Pass(aspect_ratio_);
 
   glActiveTexture(GL_TEXTURE0);
   texture_.Bind();
@@ -102,11 +112,8 @@ void SimpleShaderTest::Render() {
   glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, (void*)0);
 
   position_attribute_.Disable();
-
 }
 
-void SimpleShaderTest::Destroy() {
-  texture_loader_.Destroy();
-}
+void SimpleShaderTest::Destroy() { texture_loader_.Destroy(); }
 
 }  // namespace app
