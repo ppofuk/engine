@@ -104,4 +104,16 @@ WindowEventType WindowXlib::CheckForEvents() {
 
 void WindowXlib::Postrender() { glXSwapBuffers(display_, window_); }
 
+void WindowXlib::UpdateCursorPosition() {
+  XQueryPointer(display_,
+                window_,
+                &pointer_root_,
+                &pointer_child_,
+                &root_x_,
+                &root_y_,
+                &win_x_,
+                &win_y_,
+                &mask_);
+}
+
 }  // namespace core

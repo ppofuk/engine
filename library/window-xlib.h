@@ -56,8 +56,8 @@ class WindowXlib : public util::HasLog {
   f32 y() { return glx_window_attributes_.y; }
   f32 width() { return glx_window_attributes_.width; }
   f32 height() { return glx_window_attributes_.height; }
-  f32 cursor_x() { return win_y_; }
-  f32 cursor_y() { return win_x_; }
+  f32 cursor_x() { return win_x_; }
+  f32 cursor_y() { return win_y_; }
 
  private:
   Display* display_;
