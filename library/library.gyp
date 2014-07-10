@@ -31,9 +31,9 @@
         'texture-png.h',
         'texture-png.cc',
         'reader-inl.h',
+        'time-ticker.cc',
+        'time-ticker.h'
         # OpenGL stuff:
-        'gl/gl-texture.cc',
-        'gl/gl-texture.h',
         'gl/gl-buffer.h',
         'gl/gl-buffer.cc',
         'gl/gl-program.h',
