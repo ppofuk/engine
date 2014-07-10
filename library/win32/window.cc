@@ -36,6 +36,12 @@ DefaultWin32Proc(HWND window_handle, UINT umsg, WPARAM wparam, LPARAM lparam) {
       if (window)
         window->OnResize();
       break;
+
+    case WM_MOUSEWHEEL:
+      if (window)
+        window->OnMouseWheel(wparam);
+
+      break;
   }
 
   return DefWindowProc(window_handle, umsg, wparam, lparam);
@@ -49,12 +55,14 @@ Window::Window(void)
       instance_(0),
       is_fullscreen_(false),
       is_focused_(true),
-      is_active_(true) {}
+      is_active_(true),
+      window_event_type_(kNone) {
+}
 
-Window::~Window(void) {}
+Window::~Window(void) {
+}
 
 bool Window::Init(const char* window_title, const char* class_name) {
-
   if (instance_ && !is_init_) {
     ZeroMemory(&window_class_, sizeof(WNDCLASSEX));
 
@@ -104,7 +112,7 @@ bool Window::Init(const char* window_title, const char* class_name) {
             0,
             0,
             24,  // Depth Buffer
-            8, // Stencil buffer
+            8,   // Stencil buffer
             0,
             PFD_MAIN_PLANE,
             0,
@@ -119,7 +127,6 @@ bool Window::Init(const char* window_title, const char* class_name) {
 
           if (SetPixelFormat(
                   gdi_device_context_, pixel_format, &pixel_format_desc)) {
-
             opengl_render_context_ = wglCreateContext(gdi_device_context_);
 
             if (opengl_render_context_)
@@ -128,7 +135,7 @@ bool Window::Init(const char* window_title, const char* class_name) {
                 GLenum err = glewInit();
                 if (err != GLEW_OK) {
                   log << util::kLogDateTime << ": "
-                      << (char*) glewGetErrorString(err) << "\n";
+                      << (char*)glewGetErrorString(err) << "\n";
                   Destroy();
                   return false;
                 }
@@ -210,28 +217,35 @@ void Window::Destroy() {
   is_init_ = false;
 }
 
-void Window::Prerender() {}
+void Window::Prerender() {
+}
 
-void Window::Postrender() { SwapBuffers(gdi_device_context_); }
+void Window::Postrender() {
+  SwapBuffers(gdi_device_context_);
+}
 
-void Window::CheckForEvents() {
+WindowEventType Window::CheckForEvents() {
   // First process windows vital events. This should be _realtime_
   if (PeekMessage(&message_, 0, 0, 0, PM_REMOVE)) {
     if (message_.message == WM_QUIT)
-      Destroy();
+      window_event_type_ = kDestroyNotify;
 
     if (is_init_) {
       TranslateMessage(&message_);
       DispatchMessage(&message_);
     }
   }
+
+  WindowEventType before_event_type = window_event_type_;
+  window_event_type_ = kNone;
+  return before_event_type;
 }
 
-void Window::Fullscreen() {
+void Window::Fullscreen(bool fullscreen) {
   if (!is_init_)
     return;
 
-  if (is_fullscreen_) {
+  if (!fullscreen) {
     // Change display setting to thoes stored in registery.
     ChangeDisplaySettings(NULL, 0);
 
@@ -285,21 +299,31 @@ void Window::Fullscreen() {
 }
 
 // Event handlings
-void Window::OnActivate() { is_active_ = true; }
+void Window::OnActivate() {
+  is_active_ = true;
+  window_event_type_ = kExpose;
+}
 
-void Window::OnFocus() { is_focused_ = true; }
+void Window::OnFocus() {
+  is_focused_ = true;
+  window_event_type_ = kExpose;
+}
 
-void Window::OnInactivate() { is_active_ = false; }
+void Window::OnInactivate() {
+  is_active_ = false;
+}
 
-void Window::OnLostFocus() { is_focused_ = false; }
+void Window::OnLostFocus() {
+  is_focused_ = false;
+}
 
 void Window::OnResize() {
-  RECT rc;
-  GetClientRect(get_window_handle(), &rc);
-  meta::Rectangle rect(rc);
+  window_event_type_ = kExpose;
+}
 
-  // We assume the hardcodness of opengl now :D
-  glViewport(0, 0, rect.width, rect.height);
+void Window::OnMouseWheel(int distance) {
+  window_event_type_ = kMouseWheel;
+  mouse_wheel_distance_ = distance;
 }
 
 short Window::AsyncIsKeyPressed(int virtual_key) {
