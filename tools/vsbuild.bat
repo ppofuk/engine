@@ -2,6 +2,6 @@
 @rem Use of this source code is governed by a BSD-style license that can be
 @rem found in the LICENSE file.
 
-call vsvars32.bat
+call enviroment.bat
 @python "%~dp0vsbuild.py" %*
 pause

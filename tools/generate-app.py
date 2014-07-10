@@ -20,7 +20,7 @@ out_dir = os.path.abspath(os.path.join(root_dir, 'out'))
 def RunGyp(format):
     gyp_dir = os.path.abspath(os.path.join(script_dir, 'gyp'))
     if sys.platform in ('cygwin', 'win32'):
-        gyp_path = os.path.abspath(os.path.join(gyp_dir, 'gyp.bat')) # untested
+        gyp_path = os.path.abspath(os.path.join(gyp_dir, 'gyp.bat'))
     elif sys.platform.startswith('linux'):
         gyp_path = os.path.abspath(os.path.join(gyp_dir, 'gyp'))
 
@@ -46,4 +46,3 @@ if __name__ == '__main__':
     args = parser.parse_args()
     if RunGyp(args.format) == False:
         print('Gyp call failed')
-
