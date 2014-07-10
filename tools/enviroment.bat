@@ -4,4 +4,4 @@
 
 @rem Add your enviroment variables here
 
-call vsvars32.bat
+call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat"
