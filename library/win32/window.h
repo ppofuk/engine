@@ -19,6 +19,15 @@
 
 namespace core {
 
+enum WindowEventType {
+  kExpose,
+  kDestroyNotify,
+  kKeyPress,
+  kWindowDelete,
+  kMouseWheel,
+  kNone
+};
+
 class Window : public util::HasLog {
  public:
   Window(void);
@@ -41,12 +50,11 @@ class Window : public util::HasLog {
 
   // Implementation of WindowInterface check for events.
   // It should be called in main loop.
-  // Calls win32 api PeekMessage in depending on WM message type it
-  // activates a coresponding base::Event.
-  void CheckForEvents();
+  // It returns the current event type.
+  WindowEventType CheckForEvents();
 
-  // Set fullscreen mode
-  void Fullscreen();
+  // Set to fullscreen if |fullscreen| is true or to windowed if it's false
+  void Fullscreen(bool fullscreen);
 
   // Events
   virtual void OnFocus();
@@ -54,6 +62,7 @@ class Window : public util::HasLog {
   virtual void OnActivate();
   virtual void OnInactivate();
   virtual void OnResize();
+  virtual void OnMouseWheel(int distance);
 
   short AsyncIsKeyPressed(int virtual_key);
 
@@ -63,9 +72,9 @@ class Window : public util::HasLog {
   void set_instance(HINSTANCE instance) { instance_ = instance; }
   void set_window_name(const char window_name);
   HWND get_window_handle() { return window_handle_; }
-  bool IsFullscreen() { return is_fullscreen_; }
-  bool IsFocused() { return is_focused_; }
-  bool IsActive() { return is_active_; }
+  bool is_fullscreen() { return is_fullscreen_; }
+  bool is_focused() { return is_focused_; }
+  bool is_active() { return is_active_; }
 
   f32 width() {
     update_temp_rect();
@@ -75,6 +84,10 @@ class Window : public util::HasLog {
   f32 height() {
     update_temp_rect();
     return temp_rect_.bottom;
+  }
+
+  i32 mouse_wheel_distance() {
+    return mouse_wheel_distance_;
   }
 
  private:
@@ -100,8 +113,12 @@ class Window : public util::HasLog {
   bool is_focused_;
   bool is_active_;
   char window_name_[16];
+
+  int mouse_wheel_distance_;
+
+  WindowEventType window_event_type_;
 };
 
-} //  namespace util
+}  //  namespace util
 
 #endif
