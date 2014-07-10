@@ -7,7 +7,8 @@
 namespace app {
 
 SimpleShaderTest::SimpleShaderTest()
-    : all_init_(false), aspect_ratio_(4.0f / 3.0f) {}
+    : all_init_(false), aspect_ratio_(4.0f / 3.0f), fov_(0) {
+}
 
 bool SimpleShaderTest::ReadResources(const char* base_vertex_path,
                                      const char* vertex_shader_path,
@@ -43,9 +44,22 @@ bool SimpleShaderTest::ReadResources(const char* base_vertex_path,
 }
 
 void SimpleShaderTest::InitBuffersAndTextures() {
-  static GLfloat vertex_buffer_data[] = {-1.0f, -1.0f, 0.0f,  1.0f, 1.0f, -1.0f,
-                                         0.0f,  1.0f,  -1.0f, 1.0f, 0.0f, 1.0f,
-                                         1.0f,  1.0f,  0.0f,  1.0f};
+  static GLfloat vertex_buffer_data[] = {-1.0f,
+                                         -1.0f,
+                                         0.0f,
+                                         1.0f,
+                                         1.0f,
+                                         -1.0f,
+                                         0.0f,
+                                         1.0f,
+                                         -1.0f,
+                                         1.0f,
+                                         0.0f,
+                                         1.0f,
+                                         1.0f,
+                                         1.0f,
+                                         0.0f,
+                                         1.0f};
 
   static GLushort element_buffer_data[] = {0, 1, 2, 3};
 
@@ -57,8 +71,8 @@ void SimpleShaderTest::InitBuffersAndTextures() {
 
   texture_.set_texture_abstract(&texture_loader_);
   // Some texture experiments
-  texture_.set_gl_mag_filter(GL_NEAREST);
-  texture_.set_gl_min_filter(GL_NEAREST);
+  // texture_.set_gl_mag_filter(GL_NEAREST);
+  // texture_.set_gl_min_filter(GL_NEAREST);
 
   texture_.Generate();
 }
@@ -90,6 +104,7 @@ void SimpleShaderTest::InitProgram() {
   position_attribute_.Locate(program_, "position");
   texture_uniform_.Locate(program_, "texture");
   aspect_uniform_.Locate(program_, "aspect");
+  fov_uniform_.Locate(program_, "fov");
   log << util::kLogDateTime << " Program linked successfuly!\n";
 }
 
@@ -97,12 +112,14 @@ void SimpleShaderTest::Render() {
   program_.Use();
 
   aspect_uniform_.Pass(aspect_ratio_);
+  fov_uniform_.Pass(static_cast<GLfloat>(fov_));
 
   glActiveTexture(GL_TEXTURE0);
   texture_.Bind();
   texture_uniform_.Pass(static_cast<GLint>(0));
 
   vertex_buffer_.Bind();
+
   position_attribute_.PassVertexPointer(vertex_buffer_, 4);
 
   position_attribute_.Enable();
@@ -114,6 +131,8 @@ void SimpleShaderTest::Render() {
   position_attribute_.Disable();
 }
 
-void SimpleShaderTest::Destroy() { texture_loader_.Destroy(); }
+void SimpleShaderTest::Destroy() {
+  texture_loader_.Destroy();
+}
 
 }  // namespace app

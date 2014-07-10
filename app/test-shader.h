@@ -30,6 +30,8 @@ class SimpleShaderTest : util::HasLog {
   void Destroy();
 
   void set_aspect_ratio(float aspect_ratio) { aspect_ratio_ = aspect_ratio; }
+  void set_fov(int fov) { fov_ = fov; }
+  int fov() const { return fov_; }
 
  private:
   render::GLBuffer<GLfloat> vertex_buffer_;
@@ -41,12 +43,15 @@ class SimpleShaderTest : util::HasLog {
   render::GLAttribute<render::GLBuffer<GLfloat> > position_attribute_;
   render::GLUniform texture_uniform_;
   render::GLUniform aspect_uniform_;
+  render::GLUniform fov_uniform_;
   resource::TexturePng texture_loader_;
   char vertex_shader_source_[4096];
   char pixel_shader_source_[4096];
   bool all_init_;
 
   float aspect_ratio_;
+  int fov_;
+
 };
 
 }  // namespace app
