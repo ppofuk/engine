@@ -12,9 +12,16 @@ enum StaticArraySizes {
   kAttribNameSize = 24,   // size of char[] for storing attrib varibale names
 };
 
+enum GLShaderCompileOptions { kOnDebugOutputShaderSource = false };
+
 // Enumerations of some used types for RTTI or templating.
 enum Types {
   kUknownType,
+};
+
+
+enum MemoryPoolCompileOptions {
+  kDefaultPoolObjectCount = 4096
 };
 
 namespace util {
