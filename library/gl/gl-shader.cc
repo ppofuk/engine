@@ -2,10 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #include "gl-shader.h"
+#include "../static-compile-options.h"
 
 namespace render {
 
-GLShader::GLShader() : shader_source_(0), vaild_(false) {}
+GLShader::GLShader() : shader_source_(0), vaild_(false) {
+}
 
 void GLShader::Compile(GLenum type) {
   vaild_ = false;
@@ -18,10 +20,11 @@ void GLShader::Compile(GLenum type) {
   GLint length = strlen(shader_source_);
 
 #ifdef _DEBUG
-  log << util::kLogDateTime << ": Compiling (" << length << "b):\n"
-      << shader_source_ << "\n";
-#endif
-
+  if (kOnDebugOutputShaderSource) {
+    log << util::kLogDateTime << ": Compiling (" << length << "b):\n"
+        << shader_source_ << "\n";
+  }
+#endif  // _DEBUG
 
   shader_ = glCreateShader(type);
   glShaderSource(shader_, 1, (const GLchar**)&shader_source_, &length);
@@ -29,7 +32,7 @@ void GLShader::Compile(GLenum type) {
 
   GLenum err = glGetError();
   if (err != GL_NO_ERROR) {
-    log << util::kLogDateTime << ": " << (char *)gluErrorString(err) << "\n";
+    log << util::kLogDateTime << ": " << (char*)gluErrorString(err) << "\n";
   }
 
   GLint ok;
@@ -48,14 +51,13 @@ char* GLShader::InfoLog() {
   return info_log_;
 }
 
-
 void GLShader::CreateVertexShader(const char* shader_source) {
-  set_shader_source((char* )shader_source);
+  set_shader_source((char*)shader_source);
   Compile(GL_VERTEX_SHADER);
 }
 
 void GLShader::CreateFragmentShader(const char* shader_source) {
-  set_shader_source((char* )shader_source);
+  set_shader_source((char*)shader_source);
   Compile(GL_FRAGMENT_SHADER);
 }
 
@@ -64,4 +66,4 @@ void GLShader::Delete() {
   vaild_ = false;
 }
 
-} //  namespace render
+}  //  namespace render
