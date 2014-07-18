@@ -8,14 +8,13 @@
 #include "reader-inl.h"
 #include "time-ticker.h"
 
+
+
 INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
   core::Window window;
   core::TimeTicker ticker;
   app::SimpleShaderTest simple_shader;
 
-  window.set_instance(instance);
-  window.Init();
-  window.Destroy();
   window.set_instance(instance);
 
   if (window.Init()) {
@@ -62,7 +61,6 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
       }
 
       if (event == core::kMouseWheel) {
-        window.log << window.mouse_wheel_distance() << " ";
         if (window.mouse_wheel_distance() < 0) {
           if (simple_shader.fov() + 1 < 180)
             simple_shader.set_fov(simple_shader.fov() + 1);
