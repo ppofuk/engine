@@ -8,8 +8,6 @@
 #include "reader-inl.h"
 #include "time-ticker.h"
 
-
-
 INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
   core::Window window;
   core::TimeTicker ticker;

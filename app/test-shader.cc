@@ -71,8 +71,8 @@ void SimpleShaderTest::InitBuffersAndTextures() {
 
   texture_.set_texture_abstract(&texture_loader_);
   // Some texture experiments
-  // texture_.set_gl_mag_filter(GL_NEAREST);
-  // texture_.set_gl_min_filter(GL_NEAREST);
+  texture_.set_gl_mag_filter(GL_NEAREST);
+  texture_.set_gl_min_filter(GL_NEAREST);
 
   texture_.Generate();
 }

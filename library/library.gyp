@@ -32,7 +32,9 @@
         'texture-png.cc',
         'reader-inl.h',
         'time-ticker.cc',
-        'time-ticker.h'
+        'time-ticker.h',
+        'static-compile-options.h',
+        'memory-pool.h',
         # OpenGL stuff:
         'gl/gl-buffer.h',
         'gl/gl-buffer.cc',
@@ -106,7 +108,9 @@
             'win32/window-handles.cc',
             'win32/window-handles.h',
             'win32/window.cc',
-            'win32/window.h'
+            'win32/window.h',
+            'win32/wgl-context.h',
+            'win32/wgl-context.cc'
           ],
           'cflags': [
             '/Wall',
