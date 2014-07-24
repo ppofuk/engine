@@ -4,7 +4,7 @@
 #ifndef OBISIDIAN_BASIC_TYPES_H_
 #define OBISIDIAN_BASIC_TYPES_H_
 
-#if defined(OS_LINUX)
+#if defined(OS_LINUX) || defined(__MINGW32__)
 #include <stdint.h>
 
 typedef float f32;
