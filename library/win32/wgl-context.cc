@@ -68,7 +68,7 @@ bool WGLContext::Init() {
   if (!SetPixelFormat(gdi_device_context_, pixel_format, &pixel_format_)) {
     log << util::kLogDateTime << ": "
         << "Can't set pixel format!\n";
-    return false;    
+    return false;
   }
   opengl_render_context_ = wglCreateContext(gdi_device_context_);
 
@@ -89,7 +89,35 @@ bool WGLContext::Init() {
     return false;
   }
 
+  OnGLEWInit();
   return true;
+}
+
+void WGLContext::OnGLEWInit() const {
+  glEnable(GL_DEPTH_TEST);
+
+  char* gl_version = (char*)glGetString(GL_VERSION);
+  char* gl_vendor = (char*)glGetString(GL_VENDOR);
+  char* gl_renderer = (char*)glGetString(GL_RENDERER);
+
+  log << util::kLogDateTime << ": "
+      << "GL Context created\n" << util::kLogDateTime << ": "
+      << "GL version: " << gl_version << "\n" << util::kLogDateTime << ": "
+      << "GL vendor: " << gl_vendor << "\n" << util::kLogDateTime << ": "
+      << "GL renderer: " << gl_renderer << "\n";
+}
+
+void WGLContext::Destroy() {
+  if (opengl_render_context_) {
+    wglMakeCurrent(0, 0);
+    wglDeleteContext(opengl_render_context_);
+    opengl_render_context_ = 0;
+  }
+
+  if (gdi_device_context_) {
+    ReleaseDC(window_handle_, gdi_device_context_);
+    gdi_device_context_ = 0;
+  }
 }
 
 }  // namespace core

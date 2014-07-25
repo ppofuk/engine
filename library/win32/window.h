@@ -1,5 +1,5 @@
-#ifndef OBSIDIAN_WINDOW_H_
-#define OBSIDIAN_WINDOW_H_
+#ifndef OBSIDIAN_DEFAULT_WINDOW_H_
+#define OBSIDIAN_DEFAULT_WINDOW_H_
 
 // TODO: move from util namespace to core namespace.
 // TODO: Window::CheckForEvents() should return WindowEventType.
@@ -48,6 +48,9 @@ class Window : public util::HasLog {
   // Implementation of postrender.
   void Postrender();
 
+  // Show/hide etc.
+  void Show(int show_param = SW_SHOWNORMAL);
+
   // Implementation of WindowInterface check for events.
   // It should be called in main loop.
   // It returns the current event type.
@@ -71,7 +74,7 @@ class Window : public util::HasLog {
   bool is_init() { return is_init_; }
   void set_instance(HINSTANCE instance) { instance_ = instance; }
   void set_window_name(const char window_name);
-  HWND get_window_handle() { return window_handle_; }
+  HWND get_hwnd() { return window_handle_; }
   bool is_fullscreen() { return is_fullscreen_; }
   bool is_focused() { return is_focused_; }
   bool is_active() { return is_active_; }
@@ -86,9 +89,7 @@ class Window : public util::HasLog {
     return temp_rect_.bottom;
   }
 
-  i32 mouse_wheel_distance() {
-    return mouse_wheel_distance_;
-  }
+  i32 mouse_wheel_distance() { return mouse_wheel_distance_; }
 
  private:
   void update_temp_rect() { GetClientRect(window_handle_, &temp_rect_); }
@@ -98,8 +99,6 @@ class Window : public util::HasLog {
   bool is_init_;
 
   HWND window_handle_;
-  HDC gdi_device_context_;
-  HGLRC opengl_render_context_;
   WNDCLASSEX window_class_;
   HINSTANCE instance_;
   MSG message_;
@@ -117,6 +116,13 @@ class Window : public util::HasLog {
   int mouse_wheel_distance_;
 
   WindowEventType window_event_type_;
+
+ protected:
+  static LRESULT CALLBACK DefaultWin32Proc(HWND window_handle,
+                                           UINT umsg,
+                                           WPARAM wparam,
+                                           LPARAM lparam);
+  static WindowHandles window_handles_; 
 };
 
 }  //  namespace util

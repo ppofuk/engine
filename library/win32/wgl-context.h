@@ -29,7 +29,12 @@ class WGLContext : util::HasLog {
   bool Init();
   bool Init(HWND hwnd);
 
+  void Destroy();
+
   virtual void Postrender() const { SwapBuffers(gdi_device_context_); }
+
+  // This method is called after context successful creation and GLEW init.
+  virtual void OnGLEWInit() const; 
 
  protected:
   HWND window_handle_;

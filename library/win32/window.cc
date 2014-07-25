@@ -3,10 +3,13 @@ using namespace util;
 
 namespace core {
 
-LRESULT CALLBACK
-DefaultWin32Proc(HWND window_handle, UINT umsg, WPARAM wparam, LPARAM lparam) {
-  core::Window* window =
-      Singleton<WindowHandles>::Instance().Get(window_handle);
+WindowHandles Window::window_handles_;
+
+LRESULT CALLBACK Window::DefaultWin32Proc(HWND window_handle,
+                                          UINT umsg,
+                                          WPARAM wparam,
+                                          LPARAM lparam) {
+  core::Window* window = window_handles_.Get(window_handle);
 
   switch (umsg) {
     case WM_CLOSE:
@@ -50,8 +53,6 @@ DefaultWin32Proc(HWND window_handle, UINT umsg, WPARAM wparam, LPARAM lparam) {
 Window::Window(void)
     : is_init_(false),
       window_handle_(0),
-      gdi_device_context_(0),
-      opengl_render_context_(0),
       instance_(0),
       is_fullscreen_(false),
       is_focused_(true),
@@ -63,148 +64,60 @@ Window::~Window(void) {
 }
 
 bool Window::Init(const char* window_title, const char* class_name) {
-  if (instance_ && !is_init_) {
-    ZeroMemory(&window_class_, sizeof(WNDCLASSEX));
+  if (is_init_)
+    return false;
 
-    window_class_.cbSize = sizeof(WNDCLASSEX);
-    window_class_.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
-    window_class_.lpfnWndProc = (WNDPROC)DefaultWin32Proc;
-    window_class_.hInstance = instance_;
-    window_class_.hbrBackground = (HBRUSH)COLOR_WINDOW;
+  ZeroMemory(&window_class_, sizeof(WNDCLASSEX));
+  window_class_.cbSize = sizeof(WNDCLASSEX);
+  window_class_.style = CS_HREDRAW | CS_VREDRAW ;
+  window_class_.lpfnWndProc = DefaultWin32Proc;
+  window_class_.cbClsExtra = 0;
+  window_class_.cbWndExtra = 0;
+  window_class_.hInstance = instance_;
+  window_class_.hIcon = LoadIcon(instance_, MAKEINTRESOURCE(IDI_APPLICATION));
+  window_class_.hCursor = LoadCursor(NULL, IDC_ARROW);
+  window_class_.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+  window_class_.lpszMenuName = NULL;
+  window_class_.lpszClassName = class_name;
+  window_class_.hIconSm =
+      LoadIcon(window_class_.hInstance, MAKEINTRESOURCE(IDI_APPLICATION));
 
-    // Set cursor to default arrow.
-    window_class_.hCursor = LoadCursor(NULL, IDC_ARROW);
-    window_class_.lpszClassName = class_name;
-
-    if (RegisterClassEx(&window_class_)) {
-      window_handle_ = CreateWindowEx(
-          WS_EX_APPWINDOW | WS_EX_WINDOWEDGE,
-          class_name,
-          window_title,
-          WS_OVERLAPPEDWINDOW | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
-          0,
-          0,
-          800,
-          600,
-          NULL,
-          NULL,
-          instance_,
-          NULL);
-
-      if (window_handle_) {
-        static PIXELFORMATDESCRIPTOR pixel_format_desc = {
-            sizeof(PIXELFORMATDESCRIPTOR),
-            1,
-            PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER,
-            PFD_TYPE_RGBA,
-            32,  // Color Depth
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            24,  // Depth Buffer
-            8,   // Stencil buffer
-            0,
-            PFD_MAIN_PLANE,
-            0,
-            0,
-            0,
-            0};
-
-        gdi_device_context_ = GetDC(window_handle_);
-        if (gdi_device_context_) {
-          unsigned int pixel_format =
-              ChoosePixelFormat(gdi_device_context_, &pixel_format_desc);
-
-          if (SetPixelFormat(
-                  gdi_device_context_, pixel_format, &pixel_format_desc)) {
-            opengl_render_context_ = wglCreateContext(gdi_device_context_);
-
-            if (opengl_render_context_)
-              if (wglMakeCurrent(gdi_device_context_, opengl_render_context_)) {
-                // Load up extensions.
-                GLenum err = glewInit();
-                if (err != GLEW_OK) {
-                  log << util::kLogDateTime << ": "
-                      << (char*)glewGetErrorString(err) << "\n";
-                  Destroy();
-                  return false;
-                }
-
-                ShowWindow(window_handle_, SW_SHOW);
-                SetForegroundWindow(window_handle_);
-                SetFocus(window_handle_);
-
-                glEnable(GL_DEPTH_TEST);
-
-                is_init_ = true;
-
-                // Store style infromations for fullscreen switching
-                saved_style_ = GetWindowLongPtr(window_handle_, GWL_STYLE);
-                saved_ex_style_ = GetWindowLongPtr(window_handle_, GWL_EXSTYLE);
-                GetClientRect(get_window_handle(), &saved_rect_);
-
-                // For optimization wise, we'll register handle only if we
-                // have GL context. So we can presume, some functions called
-                // are able to execute.
-                Singleton<WindowHandles>::Instance().Add(window_handle_, this);
-
-                // Log the success with version
-                char* gl_version = (char*)glGetString(GL_VERSION);
-                char* gl_vendor = (char*)glGetString(GL_VENDOR);
-                char* gl_renderer = (char*)glGetString(GL_RENDERER);
-
-                log << kLogDateTime << ": "
-                    << "GL Context created\n" << kLogDateTime << ": "
-                    << "GL version: " << gl_version << "\n" << kLogDateTime
-                    << ": "
-                    << "GL vendor: " << gl_vendor << "\n" << kLogDateTime
-                    << ": "
-                    << "GL renderer: " << gl_renderer << "\n";
-
-              } else
-                log << kLogDateTime << ": Failed wglMakeCurrent\n";
-            else
-              log << kLogDateTime << ": Failed wglCreateContext\n";
-          } else
-            log << kLogDateTime << ": Failed SetPixelFormat\n";
-        } else
-          log << kLogDateTime << ": Failed GetDC\n";
-      } else
-        log << kLogDateTime << ": Failed CreateWindowEx\n";
-    } else
-      log << kLogDateTime << ": Failed RegisterClassEx\n";
+  if (!RegisterClassEx(&window_class_)) {
+    log << util::kLogDateTime << ": RegisterClassEx in CreateWindowClass failed!\n";
+    return false; 
   }
 
-  return is_init_;
+  window_handle_ = CreateWindow(class_name,
+                                window_title,
+                                WS_OVERLAPPEDWINDOW,
+                                CW_USEDEFAULT,
+                                CW_USEDEFAULT,
+                                800,
+                                600,
+                                NULL,
+                                NULL,
+                                instance_,
+                                NULL);
+  if (!window_handle_) {
+    log << util::kLogDateTime << ": CreateWindow failed!\n";
+    return false;
+  }
+
+  saved_style_ = GetWindowLongPtr(window_handle_, GWL_STYLE);
+  saved_ex_style_ = GetWindowLongPtr(window_handle_, GWL_EXSTYLE);
+  GetClientRect(window_handle_, &saved_rect_);
+  
+  window_handles_.Add(window_handle_, this);
+  is_init_ = true; 
+  return true; 
 }
 
 void Window::Destroy() {
   // Change display setting to thoes stored in registery.
   ChangeDisplaySettings(NULL, 0);
 
-  if (opengl_render_context_) {
-    wglMakeCurrent(0, 0);
-    wglDeleteContext(opengl_render_context_);
-    opengl_render_context_ = 0;
-  }
-
-  if (gdi_device_context_) {
-    ReleaseDC(window_handle_, gdi_device_context_);
-    gdi_device_context_ = 0;
-  }
-
   if (window_handle_) {
-    Singleton<WindowHandles>::Instance().Remove(window_handle_);
+    window_handles_.Remove(window_handle_);
     DestroyWindow(window_handle_);
     window_handle_ = 0;
   }
@@ -221,7 +134,6 @@ void Window::Prerender() {
 }
 
 void Window::Postrender() {
-  SwapBuffers(gdi_device_context_);
 }
 
 WindowEventType Window::CheckForEvents() {
@@ -266,7 +178,7 @@ void Window::Fullscreen(bool fullscreen) {
   } else {
     saved_style_ = GetWindowLongPtr(window_handle_, GWL_STYLE);
     saved_ex_style_ = GetWindowLongPtr(window_handle_, GWL_EXSTYLE);
-    GetClientRect(get_window_handle(), &saved_rect_);
+    GetClientRect(get_hwnd(), &saved_rect_);
 
     // Send restore message before going into full screen mode
     SendMessage(window_handle_, WM_SYSCOMMAND, SC_RESTORE, 0);
@@ -295,6 +207,13 @@ void Window::Fullscreen(bool fullscreen) {
                  rect.height,
                  SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
     is_fullscreen_ = true;
+  }
+}
+
+void Window::Show(int show_param) {
+  if (is_init_) {
+    ShowWindow(window_handle_, show_param);
+    UpdateWindow(window_handle_);
   }
 }
 
