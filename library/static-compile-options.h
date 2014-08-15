@@ -4,6 +4,7 @@
 
 #ifndef OBSIDIAN_STATIC_COMPILE_OPTIONS_H_
 #define OBSIDIAN_STATIC_COMPILE_OPTIONS_H_
+#include "limits.h"
 
 // Options like static array sizes and such should be defined here along
 // with corresponding comment on what they effect.
@@ -20,9 +21,7 @@ enum Types {
 };
 
 
-enum MemoryPoolCompileOptions {
-  kDefaultPoolObjectCount = 4096
-};
+#define kDefaultPoolObjectCount 4096*4096
 
 namespace util {
 static const char* log_path_file = "log.txt";
