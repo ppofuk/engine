@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <time.h>
 #include "singleton.h"
+#include "basic-types.h"
 
 namespace util {
 
@@ -32,6 +33,8 @@ class Logger {
 
   void Log(float msg) const;
 
+  void Log(long long msg) const;
+
   // Getters and setters.
   FILE* get_file() const { return file_; }
 
@@ -51,6 +54,8 @@ class Logger {
   const Logger& operator<<(LoggerType rhs) const;
 
   const Logger& operator<<(size_t rhs) const;
+
+  const Logger& operator<<(long long rhs) const;
 
  private:
   FILE* file_;

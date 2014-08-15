@@ -18,6 +18,11 @@ void Logger::Log(int msg) const {
   fprintf(stdout, "%d", msg);
 }
 
+void Logger::Log(long long msg) const {
+  fprintf(file_, "%I64d", msg);
+  fprintf(stdout, "%I64d", msg);
+}
+
 void Logger::Log(float msg) const {
   fprintf(file_, "%f", msg);
   fprintf(stdout, "%f", msg);
@@ -40,6 +45,11 @@ const Logger& Logger::operator<<(float rhs) const {
 
 const Logger& Logger::operator<<(size_t rhs) const {
   Log((int)rhs);
+  return *this;
+}
+
+const Logger& Logger::operator<<(long long rhs) const {
+  Log(rhs);
   return *this;
 }
 
