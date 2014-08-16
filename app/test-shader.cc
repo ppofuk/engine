@@ -44,7 +44,7 @@ bool SimpleShaderTest::ReadResources(const char* base_vertex_path,
 }
 
 void SimpleShaderTest::InitBuffersAndTextures() {
-  static GLfloat vertex_buffer_data[] = {-1.0f,
+  static GLfloat vertex_buffer_data_[] = {-1.0f,
                                          -1.0f,
                                          0.0f,
                                          1.0f,
@@ -60,6 +60,8 @@ void SimpleShaderTest::InitBuffersAndTextures() {
                                          1.0f,
                                          0.0f,
                                          1.0f};
+
+  memcpy(vertex_buffer_data, vertex_buffer_data_, sizeof(vertex_buffer_data_));
 
   static GLushort element_buffer_data[] = {0, 1, 2, 3};
 

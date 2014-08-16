@@ -1,7 +1,7 @@
 {
 
   'variables': {
-    'library': 'static_library'
+    'obsidian_library': 'static_library'
   },
 
   'target_defaults': {

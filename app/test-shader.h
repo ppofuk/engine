@@ -33,6 +33,8 @@ class SimpleShaderTest : util::HasLog {
   void set_fov(int fov) { fov_ = fov; }
   int fov() const { return fov_; }
 
+  GLfloat vertex_buffer_data[16];
+
  private:
   render::GLBuffer<GLfloat> vertex_buffer_;
   render::GLBuffer<GLushort> element_buffer_;

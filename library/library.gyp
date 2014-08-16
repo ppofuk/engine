@@ -6,7 +6,7 @@
   'targets': [
     {
       'target_name': 'library',
-      'type': '<(library)',
+      'type': '<(obsidian_library)',
       'defines': [
         'LIBRARY_EXPORT'
       ],
@@ -15,7 +15,8 @@
       ],
       'dependencies': [
         '../third-party/libpng.gyp:libpng',
-        '../third-party/glew.gyp:glew'
+        '../third-party/glew.gyp:glew',
+        '../third-party/freetype.gyp:freetype'
       ],
       'sources': [
         'basic-types.h',
