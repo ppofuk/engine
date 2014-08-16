@@ -34,10 +34,9 @@
         "-isystem", "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/usr/include/c++/4.2.1",
         "-F/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk/System/Library/Frameworks/",
         "-Wno-deprecated-declarations",
-        "-isystem", "D:\\MinGW\\lib\\gcc\\mingw32\\4.8.1\\include",
-        "-isystem", "D:\\MinGW\\lib\\gcc\\mingw32\\4.8.1\\include\\c++",
-        "-isystem", "D:\\MinGW\\lib\\gcc\\mingw32\\4.8.1\\include\\c++\\mingw32",
-        "-isystem", "D:\\MinGW\\include",
+        "-isystem", "C:\\MinGW\\lib\\gcc\\mingw32\\4.8.1\\include\\c++",
+        "-isystem", "C:\\MinGW\\lib\\gcc\\mingw32\\4.8.1\\include\\c++\\mingw32",
+        "-isystem", "C:\\MinGW\\include",
         "-isystem", "/usr/include",
         "-isystem", "/usr/include/c++/*",
         "-Wall",
@@ -50,14 +49,16 @@
         "-DOS_WINDOWS",
         "-DOS_LINUX",
 
-        "-I", "D:\\src\\obsidian\\third-party\\glew\\include",
-        "-I", "D:\\src\\obsidian\\library",
-        "-I", "D:\\src\\obsidian\\third-party\\libpng",
-        "-I", "D:\\src\\obsidian\\third-party\\zlib",
-        "-I", "D:\\src\\obsidian\\third-party\\gtest\\include",
+        "-I", "E:\\Development\\engine\\third-party\\glew\\include",
+        "-I", "E:\\Development\\engine\\third-party\\freetype\\include",
+        "-I", "E:\\Development\\engine\\library",
+        "-I", "E:\\Development\\engine\\third-party\\libpng",
+        "-I", "E:\\Development\\engine\\third-party\\zlib",
+        "-I", "E:\\Development\\engine\\third-party\\gtest\\include",
 
         "-ferror-limit=0",
-        "-DLIBRARY_EXPORT"
+        "-DLIBRARY_EXPORT",
+        "-std=gnu++11"
     ]
   }
 }
