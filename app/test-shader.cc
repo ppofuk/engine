@@ -10,8 +10,7 @@ SimpleShaderTest::SimpleShaderTest()
     : all_init_(false), aspect_ratio_(4.0f / 3.0f), fov_(0) {
 }
 
-bool SimpleShaderTest::ReadResources(const char* base_vertex_path,
-                                     const char* vertex_shader_path,
+bool SimpleShaderTest::ReadResources(const char* vertex_shader_path,
                                      const char* pixel_shader_path,
                                      const char* texture_png_path) {
   util::ByteReader reader;
@@ -45,21 +44,21 @@ bool SimpleShaderTest::ReadResources(const char* base_vertex_path,
 
 void SimpleShaderTest::InitBuffersAndTextures() {
   static GLfloat vertex_buffer_data_[] = {-1.0f,
-                                         -1.0f,
-                                         0.0f,
-                                         1.0f,
-                                         1.0f,
-                                         -1.0f,
-                                         0.0f,
-                                         1.0f,
-                                         -1.0f,
-                                         1.0f,
-                                         0.0f,
-                                         1.0f,
-                                         1.0f,
-                                         1.0f,
-                                         0.0f,
-                                         1.0f};
+                                          -1.0f,
+                                          0.0f,
+                                          1.0f,
+                                          1.0f,
+                                          -1.0f,
+                                          0.0f,
+                                          1.0f,
+                                          -1.0f,
+                                          1.0f,
+                                          0.0f,
+                                          1.0f,
+                                          1.0f,
+                                          1.0f,
+                                          0.0f,
+                                          1.0f};
 
   memcpy(vertex_buffer_data, vertex_buffer_data_, sizeof(vertex_buffer_data_));
 
@@ -71,7 +70,7 @@ void SimpleShaderTest::InitBuffersAndTextures() {
   render::CreateElementBuffer(
       &element_buffer_, GL_STATIC_DRAW, element_buffer_data, 4);
 
-  texture_.set_texture_abstract(&texture_loader_);
+  texture_.set_texture_loader(&texture_loader_);
   // Some texture experiments
   texture_.set_gl_mag_filter(GL_NEAREST);
   texture_.set_gl_min_filter(GL_NEAREST);

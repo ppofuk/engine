@@ -10,7 +10,7 @@
 #include "render/gl-texture-2d.h"
 #include "render/gl-attribute.h"
 #include "render/gl-uniform.h"
-#include "texture-png.h"
+#include "render/texture-loader.h"
 #include "logger.h"
 
 namespace app {
@@ -18,8 +18,7 @@ namespace app {
 class SimpleShaderTest : util::HasLog {
  public:
   SimpleShaderTest();
-  bool ReadResources(const char* base_vertex_path,
-                     const char* vertex_shader_path,
+  bool ReadResources(const char* vertex_shader_path,
                      const char* pixel_shader_path,
                      const char* texture_png_path);
 
@@ -39,21 +38,20 @@ class SimpleShaderTest : util::HasLog {
   render::GLBuffer<GLfloat> vertex_buffer_;
   render::GLBuffer<GLushort> element_buffer_;
   render::GLTexture texture_;
-  render::GLShader vertex_shader_;
-  render::GLShader pixel_shader_;
+  render::GLShaderObject vertex_shader_;
+  render::GLShaderObject pixel_shader_;
   render::GLProgram program_;
   render::GLAttribute<render::GLBuffer<GLfloat> > position_attribute_;
   render::GLUniform texture_uniform_;
   render::GLUniform aspect_uniform_;
   render::GLUniform fov_uniform_;
-  render::TexturePng texture_loader_;
+  render::TextureLoader texture_loader_;
   char vertex_shader_source_[4096];
   char pixel_shader_source_[4096];
   bool all_init_;
 
   float aspect_ratio_;
   int fov_;
-
 };
 
 }  // namespace app
