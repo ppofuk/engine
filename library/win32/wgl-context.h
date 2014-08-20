@@ -6,6 +6,7 @@
 // This is only intended for usage where an win32 api window exists.
 
 #include "GL/glew.h"
+#include "GL/wglew.h"
 #include "window.h"
 
 namespace core {
@@ -35,6 +36,27 @@ class WGLContext : util::HasLog {
   bool Init(const Window& window) { Init(window.get_hwnd()); }
 
   void Destroy();
+
+  // Vsync or swap Interval is a means of synchronizing the swapping of the
+  // front and back frame buffers with vertical blanks (v-blank): the hardware
+  // event where the screen image is updated with data from the front
+  // framebuffer . It is a very common means of preventing frame "tearing,"
+  // (seeing half of one frame and half of another) as often seen in
+  // high-motion-content graphics.
+  //
+  // If |enable| is true, vsync will be enabled.
+  //
+  // Recent GL drivers implement a new WGL/GLX extension called
+  // EXT_swap_control_tear. This extension brings "adaptive vsync" as featured
+  // in modern gaming consoles to the PC.
+  // Adaptive vsync enables v-blank synchronization when the frame rate is
+  // higher than the sync rate, but disables synchronisation when the frame rate
+  // drops below the sync rate. Disabling the synchronisation on low frame rates
+  // prevents the common problem where the frame rate syncs to a integer
+  // fraction of the screen's refresh rate in a complex scene.
+  //
+  // If |adaptive| is ture, adaptive vsync will be enabled.
+  void Vsync(bool enable, bool adaptive = false);
 
   virtual void Postrender() const { SwapBuffers(gdi_device_context_); }
 

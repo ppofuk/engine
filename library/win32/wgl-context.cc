@@ -38,6 +38,7 @@ PIXELFORMATDESCRIPTOR WGLContext::pixel_format_desc(u8 color_depth,
       0,
       0,
       0,
+
       depth_buffer,    // Depth Buffer
       stencil_buffer,  // Stencil buffer
       0,
@@ -105,6 +106,17 @@ void WGLContext::OnGLEWInit() const {
       << "GL version: " << gl_version << "\n" << util::kLogDateTime << ": "
       << "GL vendor: " << gl_vendor << "\n" << util::kLogDateTime << ": "
       << "GL renderer: " << gl_renderer << "\n";
+}
+
+void WGLContext::Vsync(bool enable, bool adaptive) {
+  if (enable) {
+    if (adaptive)
+      wglSwapIntervalEXT(-1);
+    else
+      wglSwapIntervalEXT(1);
+  } else {
+    wglSwapIntervalEXT(0);
+  }
 }
 
 void WGLContext::Destroy() {
