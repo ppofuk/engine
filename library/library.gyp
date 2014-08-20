@@ -14,9 +14,7 @@
         '.',
       ],
       'dependencies': [
-        '../third-party/libpng.gyp:libpng',
-        '../third-party/glew.gyp:glew',
-        '../third-party/freetype.gyp:freetype'
+        '../third-party/glew.gyp:glew'
       ],
       'sources': [
         'basic-types.h',
@@ -32,17 +30,14 @@
         'memory.h',
         #Render
         'render/texture-abstract.h',
-        'render/sprite-properties.cc',
-        'render/sprite-properties.h',
-        'render/sprite.h',
-        'render/sprite.cc',
+        'render/texture-loader.cc',
         # Render: OpenGL stuff:
         'render/gl-buffer.h',
         'render/gl-buffer.cc',
         'render/gl-program.h',
         'render/gl-program.cc',
-        'render/gl-shader.h',
-        'render/gl-shader.cc',
+        'render/gl-shader-object.h',
+        'render/gl-shader-object.cc',
         'render/gl-texture-2d.h',
         'render/gl-texture-2d.cc',
         'render/gl-uniform.h',
