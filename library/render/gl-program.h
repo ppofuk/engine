@@ -4,7 +4,7 @@
 #ifndef OBSIDIAN_GL_PROGRAM_H_
 #define OBSIDIAN_GL_PROGRAM_H_
 
-#include "gl-shader.h"
+#include "gl-shader-object.h"
 #include <string.h>
 
 namespace render {
@@ -18,10 +18,10 @@ class GLProgram {
   void Init();
 
   // Attach a specified shader to program.
-  void AttachShader(const GLShader& shader);
+  void AttachShader(const GLShaderObject& shader);
 
   // Remove shader from program.
-  void DetachShader(const GLShader& shader);
+  void DetachShader(const GLShaderObject& shader);
 
   // Link program with all shaders. You should check is_vaild() after and if it
   // yields false you can check the error with InfoLog.

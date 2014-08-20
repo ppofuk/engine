@@ -12,7 +12,7 @@ void GLProgram::Init() {
   program_ = glCreateProgram();
 }
 
-void GLProgram::AttachShader(const GLShader& shader) {
+void GLProgram::AttachShader(const GLShaderObject& shader) {
   glAttachShader(program_, shader.get_shader());
 }
 
@@ -46,7 +46,7 @@ void GLProgram::Use() {
   }
 }
 
-void GLProgram::DetachShader(const GLShader& shader) {
+void GLProgram::DetachShader(const GLShaderObject& shader) {
   glDetachShader(program_, shader.get_shader());
 }
 

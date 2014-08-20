@@ -1,19 +1,22 @@
 // Copyright (C) 2014 Petar Pofuk. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-#include "gl-shader.h"
+#include "gl-shader-object.h"
 #include "../static-compile-options.h"
 
 namespace render {
 
-GLShader::GLShader() : shader_source_(0), vaild_(false) {
+GLShaderObject::GLShaderObject()
+    : shader_source_(0), vaild_(false), type_(GL_VERTEX_ARRAY) {
 }
 
-void GLShader::Compile(GLenum type) {
+void GLShaderObject::Compile(GLenum type) {
+  type_ = type;
   vaild_ = false;
   if (!shader_source_) {
-    log << util::kLogDateTime << ": shader_source not supplied in GLShader at "
-        << (int)((void*)this) << "\n";
+    log << util::kLogDateTime
+        << ": shader_source not supplied in GLShaderObject at "
+        << (size_t)((void*)this) << "\n";
     return;
   }
 
@@ -43,7 +46,7 @@ void GLShader::Compile(GLenum type) {
   }
 }
 
-char* GLShader::InfoLog() {
+char* GLShaderObject::InfoLog() {
   GLint length;
   glGetShaderiv(shader_, GL_INFO_LOG_LENGTH, &length);
   glGetShaderInfoLog(shader_, length, NULL, info_log_);
@@ -51,17 +54,17 @@ char* GLShader::InfoLog() {
   return info_log_;
 }
 
-void GLShader::CreateVertexShader(const char* shader_source) {
+void GLShaderObject::CreateVertexShader(const char* shader_source) {
   set_shader_source((char*)shader_source);
   Compile(GL_VERTEX_SHADER);
 }
 
-void GLShader::CreateFragmentShader(const char* shader_source) {
+void GLShaderObject::CreateFragmentShader(const char* shader_source) {
   set_shader_source((char*)shader_source);
   Compile(GL_FRAGMENT_SHADER);
 }
 
-void GLShader::Delete() {
+void GLShaderObject::Delete() {
   glDeleteShader(shader_);
   vaild_ = false;
 }
