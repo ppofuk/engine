@@ -20,7 +20,7 @@ class GLShader : public util::HasLog {
   void set_shader_source(char* shader_source) {
     shader_source_ = shader_source;
   }
-  bool is_vaild() { return vaild_; }
+  bool is_vaild() const { return vaild_; }
   GLuint get_shader() const { return shader_; }
 
   // Get compile errors and etc. of GLSL shader.

@@ -18,12 +18,10 @@ class GLProgram {
   void Init();
 
   // Attach a specified shader to program.
-  // If |delete_shader| is true, then shader.Delete() will be called after
-  // attachment.
-  void AttachShader(GLShader& shader, bool delete_shader = false);
+  void AttachShader(const GLShader& shader);
 
   // Remove shader from program.
-  void DetachShader(GLShader& shader);
+  void DetachShader(const GLShader& shader);
 
   // Link program with all shaders. You should check is_vaild() after and if it
   // yields false you can check the error with InfoLog.

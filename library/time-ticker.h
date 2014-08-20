@@ -20,7 +20,7 @@ class TimeTicker {
 
   // Saves the current updated time to |time_saved_|.
   void Save();
-
+  
   // Returns the current time is system clock representation.
   i64 time_now() { return performance_count_.QuadPart; }
 

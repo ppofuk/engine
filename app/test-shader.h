@@ -5,11 +5,11 @@
 #ifndef OBSIDIAN_APP_TEST_SHADER_H_
 #define OBSIDIAN_APP_TEST_SHADER_H_
 
-#include "gl/gl-buffer.h"
-#include "gl/gl-program.h"
-#include "gl/gl-texture.h"
-#include "gl/gl-attribute.h"
-#include "gl/gl-uniform.h"
+#include "render/gl-buffer.h"
+#include "render/gl-program.h"
+#include "render/gl-texture-2d.h"
+#include "render/gl-attribute.h"
+#include "render/gl-uniform.h"
 #include "texture-png.h"
 #include "logger.h"
 
@@ -46,7 +46,7 @@ class SimpleShaderTest : util::HasLog {
   render::GLUniform texture_uniform_;
   render::GLUniform aspect_uniform_;
   render::GLUniform fov_uniform_;
-  resource::TexturePng texture_loader_;
+  render::TexturePng texture_loader_;
   char vertex_shader_source_[4096];
   char pixel_shader_source_[4096];
   bool all_init_;

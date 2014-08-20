@@ -31,11 +31,13 @@ enum WindowEventType {
 class Window : public util::HasLog {
  public:
   Window(void);
+  Window(HINSTANCE hinstance);
   ~Window(void);
 
   // Create a win32 window and a rendering context for OpenGL
   // Before calling Init(), instance_ should be set with set_instance function.
-  // Private HINSTANCE instance_ is normaly a WinMain argumment.
+  // Private HINSTANCE instance_ is normally a WinMain argument.
+  // Alternatively you can pass HINSTNCE in the constructor.
   bool Init(const char* window_title = "Obsidian",
             const char* class_name = "ObsidianEngine");
 
@@ -70,14 +72,14 @@ class Window : public util::HasLog {
   short AsyncIsKeyPressed(int virtual_key);
 
   // Setters and geters.
-  bool get_is_init() { return is_init_; }
-  bool is_init() { return is_init_; }
+  bool get_is_init() const { return is_init_; }
+  bool is_init() const { return is_init_; }
   void set_instance(HINSTANCE instance) { instance_ = instance; }
   void set_window_name(const char window_name);
-  HWND get_hwnd() { return window_handle_; }
-  bool is_fullscreen() { return is_fullscreen_; }
-  bool is_focused() { return is_focused_; }
-  bool is_active() { return is_active_; }
+  HWND get_hwnd() const { return window_handle_; }
+  bool is_fullscreen() const { return is_fullscreen_; }
+  bool is_focused() const { return is_focused_; }
+  bool is_active() const { return is_active_; }
 
   f32 width() {
     update_temp_rect();
@@ -88,6 +90,9 @@ class Window : public util::HasLog {
     update_temp_rect();
     return temp_rect_.bottom;
   }
+
+  f32 width() const { return temp_rect_.right; }
+  f32 height() const { return temp_rect_.bottom; }
 
   i32 mouse_wheel_distance() { return mouse_wheel_distance_; }
 
@@ -122,7 +127,7 @@ class Window : public util::HasLog {
                                            UINT umsg,
                                            WPARAM wparam,
                                            LPARAM lparam);
-  static WindowHandles window_handles_; 
+  static WindowHandles window_handles_;
 };
 
 }  //  namespace util

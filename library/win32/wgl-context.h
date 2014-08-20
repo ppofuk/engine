@@ -26,15 +26,20 @@ class WGLContext : util::HasLog {
     pixel_format_ = pixel_format_desc();
   }
 
+  void set_pixel_fomat_desc(PIXELFORMATDESCRIPTOR desc) {
+    pixel_format_ = desc;
+  }
+
   bool Init();
   bool Init(HWND hwnd);
+  bool Init(const Window& window) { Init(window.get_hwnd()); }
 
   void Destroy();
 
   virtual void Postrender() const { SwapBuffers(gdi_device_context_); }
 
   // This method is called after context successful creation and GLEW init.
-  virtual void OnGLEWInit() const; 
+  virtual void OnGLEWInit() const;
 
  protected:
   HWND window_handle_;
@@ -42,6 +47,8 @@ class WGLContext : util::HasLog {
   HGLRC opengl_render_context_;
   PIXELFORMATDESCRIPTOR pixel_format_;
 };
+
+typedef WGLContext GLContext;
 
 }  // namespace core
 

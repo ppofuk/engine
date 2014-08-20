@@ -60,6 +60,17 @@ Window::Window(void)
       window_event_type_(kNone) {
 }
 
+Window::Window(HINSTANCE hinstance)
+    : is_init_(false),
+      window_handle_(0),
+      instance_(hinstance),
+      is_fullscreen_(false),
+      is_focused_(true),
+      is_active_(true),
+      window_event_type_(kNone) {
+}
+
+
 Window::~Window(void) {
 }
 
@@ -84,7 +95,7 @@ bool Window::Init(const char* window_title, const char* class_name) {
 
   if (!RegisterClassEx(&window_class_)) {
     log << util::kLogDateTime << ": RegisterClassEx in CreateWindowClass failed!\n";
-    return false; 
+    return false;
   }
 
   window_handle_ = CreateWindow(class_name,
@@ -106,10 +117,10 @@ bool Window::Init(const char* window_title, const char* class_name) {
   saved_style_ = GetWindowLongPtr(window_handle_, GWL_STYLE);
   saved_ex_style_ = GetWindowLongPtr(window_handle_, GWL_EXSTYLE);
   GetClientRect(window_handle_, &saved_rect_);
-  
+
   window_handles_.Add(window_handle_, this);
-  is_init_ = true; 
-  return true; 
+  is_init_ = true;
+  return true;
 }
 
 void Window::Destroy() {

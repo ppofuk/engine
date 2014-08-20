@@ -6,17 +6,15 @@
 
 #include "logger.h"
 
-namespace resource {
+namespace render {
 
-class TextureAbstract : public util::HasLog {
+class TextureLoaderAbstract : public util::HasLog {
  public:
   typedef unsigned char byte;
 
-  TextureAbstract() : has_alpha_(false), width_(0), height_(0) {}
+  TextureLoaderAbstract() : has_alpha_(false), width_(0), height_(0) {}
 
-  // Virtual function definition that should be implemented
-  virtual bool Load(const char* file) = 0;
-
+  virtual bool Load(const char* file_name) = 0;
   // Deallocate all junk, mostly texture data
   virtual void Destroy() = 0;
 

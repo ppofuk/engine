@@ -5,12 +5,11 @@
 #define OBSIDIAN_GL_TEXTURE_H_
 
 #include "GL/glew.h"
-#include "../texture-abstract.h"
+#include "texture-loader-abstract.h"
 
 namespace render {
 class GLTexture {
  public:
-
   GLTexture();
 
   GLint get_gl_alpha() const { return gl_alpha_; }
@@ -29,10 +28,10 @@ class GLTexture {
   void set_gl_wrap_s(GLint gl_wrap_s) { gl_wrap_s_ = gl_wrap_s; }
   void set_gl_wrap_t(GLint gl_wrap_t) { gl_wrap_t_ = gl_wrap_t; }
 
-  resource::TextureAbstract* get_texture_abstract() const {
+  TextureLoaderAbstract* get_texture_loader() const {
     return texture_abstract_;
   }
-  void set_texture_abstract(resource::TextureAbstract* texture_abstract) {
+  void set_texture_loader(TextureLoaderAbstract* texture_abstract) {
     texture_abstract_ = texture_abstract;
   }
 
@@ -50,7 +49,7 @@ class GLTexture {
   GLint gl_wrap_s_;
   GLint gl_wrap_t_;
 
-  resource::TextureAbstract* texture_abstract_;
+  TextureLoaderAbstract* texture_abstract_;
 };
 
 }  // namespace render
