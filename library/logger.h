@@ -74,5 +74,7 @@ class HasLog {
   const Logger& log;
 };
 
+static Logger& Log = Singleton<Logger>::Instance();
+
 } //  namespace util
 #endif
