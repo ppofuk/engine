@@ -53,6 +53,9 @@ class Window : public util::HasLog {
   // Show/hide etc.
   void Show(int show_param = SW_SHOWNORMAL);
 
+  // Set title
+  void Title(const char* title);
+
   // Implementation of WindowInterface check for events.
   // It should be called in main loop.
   // It returns the current event type.

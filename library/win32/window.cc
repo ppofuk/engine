@@ -269,4 +269,8 @@ short Window::AsyncIsKeyPressed(int virtual_key) {
     return 0;
 }
 
+void Window::Title(const char* title) {
+  SetWindowText(window_handle_, title);
+}
+
 }  //  namespace util
