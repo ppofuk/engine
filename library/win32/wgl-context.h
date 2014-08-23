@@ -33,7 +33,7 @@ class WGLContext : util::HasLog {
 
   bool Init();
   bool Init(HWND hwnd);
-  bool Init(const Window& window) { Init(window.get_hwnd()); }
+  bool Init(const Window& window) { return Init(window.get_hwnd()); }
 
   void Destroy();
 
