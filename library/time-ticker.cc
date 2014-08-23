@@ -9,15 +9,21 @@ namespace core {
 void TimeTicker::Update() {
   QueryPerformanceFrequency(&frequency_);
   QueryPerformanceCounter(&performance_count_);
-  time_updated_ = time_now();
+  time_updated_ = performance_count_.QuadPart;
 }
 
 void TimeTicker::Save() {
-  time_saved_ = time_now();
+  time_saved_ = time_on_update();
 }
 
 i64 TimeTicker::time_between() {
   return time_updated_ - time_saved_;
+}
+
+i64 TimeTicker::passed_since_update() {
+  QueryPerformanceFrequency(&frequency_);
+  QueryPerformanceCounter(&performance_count_);
+  return performance_count_.QuadPart - time_updated_;
 }
 
 bool TimeTicker::Tick(i64 tick_time) {

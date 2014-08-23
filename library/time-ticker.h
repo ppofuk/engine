@@ -18,17 +18,13 @@ class TimeTicker {
   // Updates the current intern time to |time_updated_|.
   void Update();
 
-  // Saves the current updated time to |time_saved_|.
-  void Save();
-  
-  // Returns the current time is system clock representation.
-  i64 time_now() { return performance_count_.QuadPart; }
+  // Returns the time of last Update() call in system clock representation.
+  i64 time_on_update() { return time_updated_; }
 
-  // Returns the difference between updated and saved time, the difference
-  // between Save() and Update() calls.
-  i64 time_between();
+  i64 tick_treshold() const { return tick_treshold_; }
 
-  i64 tick_treshold() { return tick_treshold_; }
+  // Returns the current passed time since last Update()
+  i64 passed_since_update();
 
   // Tick returns true if the tick_time is greater or equel to time between two
   // Tick calls. |tick_treshold()| will contain the size of deviation. The
@@ -36,6 +32,13 @@ class TimeTicker {
   bool Tick(i64 tick_time);
 
  private:
+  // Saves the current updated time to |time_saved_|.
+  void Save();
+
+  // Returns the difference between updated and saved time, the difference
+  // between Save() and Update() calls.
+  i64 time_between();
+
   LARGE_INTEGER frequency_, performance_count_;
   i64 time_saved_;
   i64 time_updated_;
