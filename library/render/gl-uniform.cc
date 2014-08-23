@@ -8,7 +8,8 @@
 
 namespace render {
 
-GLUniform::GLUniform() : location_(-1), program_(0) {}
+GLUniform::GLUniform() : location_(-1), program_(0) {
+}
 
 void GLUniform::Locate(const render::GLProgram& program,
                        const char* uniform_name) {
@@ -16,14 +17,25 @@ void GLUniform::Locate(const render::GLProgram& program,
   assert(strlen(uniform_name) < kUniformNameSize - 1);
   memcpy(uniform_name_, uniform_name, kUniformNameSize);
   location_ = glGetUniformLocation(program_, uniform_name_);
-  assert(location_ != -1);
+#ifdef _DEBUG
+  if (location_ == -1) {
+    util::Log << util::kLogDateTime << ": Warning! " << __FILE__ << ": "
+              << __LINE__ << " location_ is -1 for " << uniform_name << " \n";
+  }
+#endif  // _DEBUG
 }
 
-void GLUniform::Pass(GLfloat value) { glUniform1f(location_, value); }
+void GLUniform::Pass(GLfloat value) {
+  glUniform1f(location_, value);
+}
 
-void GLUniform::Pass(GLint value) { glUniform1i(location_, value); }
+void GLUniform::Pass(GLint value) {
+  glUniform1i(location_, value);
+}
 
-void GLUniform::Pass(GLuint value) { glUniform1ui(location_, value); }
+void GLUniform::Pass(GLuint value) {
+  glUniform1ui(location_, value);
+}
 
 void GLUniform::Pass(GLfloat* values, size_t count) {
   glUniform1fv(location_, count, values);

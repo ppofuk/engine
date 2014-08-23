@@ -24,6 +24,11 @@ class GLAttributeBase {
   // This method should be always called.
   void Locate(const render::GLProgram& program, const char* attrib_name);
 
+  // Bind to user specified location.
+  void BindLocation(const render::GLProgram& program,
+                    GLuint index,
+                    const char* attrib_name);
+
   GLint get_location() const { return location_; }
   void set_location(const GLint location) { location_ = location; }
   const char* get_attrib_name() const { return attrib_name_; }

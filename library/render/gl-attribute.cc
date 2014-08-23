@@ -9,7 +9,8 @@
 namespace render {
 namespace intern {
 
-GLAttributeBase::GLAttributeBase() : location_(-1), program_(0) {}
+GLAttributeBase::GLAttributeBase() : location_(-1), program_(0) {
+}
 
 void GLAttributeBase::Locate(const render::GLProgram& program,
                              const char* attrib_name) {
@@ -17,7 +18,21 @@ void GLAttributeBase::Locate(const render::GLProgram& program,
   assert(strlen(attrib_name) < kAttribNameSize - 1);
   memcpy(attrib_name_, attrib_name, kAttribNameSize);
   location_ = glGetAttribLocation(program_, attrib_name_);
-  assert(location_ != -1);
+
+#ifdef _DEBUG
+  if (location_ == 1) {
+    util::Log << util::kLogDateTime << ": Warning! " << __FILE__ << ": "
+              << __LINE__ << " location_ is -1 for " << attrib_name << " \n";
+  }
+#endif  // _DEBUG
+}
+
+void GLAttributeBase::BindLocation(const render::GLProgram& program,
+                                   GLuint index,
+                                   const char* attrib_name) {
+  glBindAttribLocation(program.get_program(), index, attrib_name);
+  location_ = index;
+  program_ = program.get_program();
 }
 
 }  // namespace intern
