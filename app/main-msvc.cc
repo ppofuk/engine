@@ -8,6 +8,8 @@
 #include "reader-inl.h"
 #include "time-ticker.h"
 
+#include "test-shader.h"
+
 bool CheckResourceExistance() {
   // This is only for testing.
   util::HasLog has_log;
@@ -24,8 +26,12 @@ bool CheckResourceExistance() {
 
 INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
   core::Window window(instance);
-  core::WGLContext wgl_context;
-  core::TimeTicker ticker;
+  core::WGLContext context;
+  core::TimeTicker ticker, ticker_on_30_fps;
+
+  app::SimpleShaderTest simple_shader_test;
+
+  char fps_string[16];
 
   if (!CheckResourceExistance()) {
     return 0;
@@ -35,50 +41,94 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
     return 0;
   }
 
-  wgl_context.set_pixel_format_desc();
-  if (!wgl_context.Init(window)) {
+  if (!context.Init(window)) {
     return 0;
   }
-  window.Show();
 
+  window.Show();
   glViewport(0, 0, window.width(), window.height());
 
+  simple_shader_test.ReadResources("resources/simple-vertex.vs",
+                                   "resources/simple-fragment.vs",
+                                   "resources/actor.png");
+  simple_shader_test.InitBuffersAndTextures();
+  simple_shader_test.InitShaders();
+  simple_shader_test.InitProgram();
+
+  simple_shader_test.set_fov(-75);
+  simple_shader_test.set_aspect_ratio(window.width() / window.height());
+
   while (window.is_init()) {
+    ticker.Update();
     core::WindowEventType event = window.CheckForEvents();
 
     if (event == core::kExpose) {
       glViewport(0, 0, window.width(), window.height());
-    } else if (event == core::kDestroyNotify) {
-      window.Destroy();
-    } else {
-      if (window.AsyncIsKeyPressed(VK_ESCAPE)) {
-        window.Destroy();
-      }
-
-      if (window.AsyncIsKeyPressed(VK_F8)) {
-        window.Fullscreen(!window.is_fullscreen());
-      }
-
-      if (event == core::kMouseWheel) {
-        if (window.mouse_wheel_distance() < 0) {
-        }
-      }
-
-      if (ticker.Tick(41666666)) {
-        // 30hz tick
-      }
-
-      window.Prerender();
-
-      glClearColor(0.0, 0.0, 0.0, 1.0);
-      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-      wgl_context.Postrender();
-      Sleep(10);
     }
+    if (event == core::kDestroyNotify) {
+      context.Destroy();
+      window.Destroy();
+      simple_shader_test.Destroy();
+      return 0;
+    }
+
+    if (window.AsyncIsKeyPressed(VK_ESCAPE)) {
+      window.Destroy();
+    }
+
+    if (window.AsyncIsKeyPressed(VK_F8)) {
+      window.Fullscreen(!window.is_fullscreen());
+    }
+
+    if (event == core::kMouseWheel) {
+      if (window.mouse_wheel_distance() < 0) {
+        if (simple_shader_test.fov() + 1 < 180)
+          simple_shader_test.set_fov(simple_shader_test.fov() + 1);
+      } else {
+        if (simple_shader_test.fov() - 1 > -180)
+          simple_shader_test.set_fov(simple_shader_test.fov() - 1);
+      }
+    }
+
+    if (ticker_on_30_fps.Tick(41666666)) {
+      // 30hz tick
+      for (size_t i = 0; i < 4; ++i) {
+        float& x = simple_shader_test.vertex_buffer_data[4*i];
+        float& y = simple_shader_test.vertex_buffer_data[4*i + 1];
+        float& z = simple_shader_test.vertex_buffer_data[4*i + 2];
+        float& w = simple_shader_test.vertex_buffer_data[4*i + 3];
+
+        // Translate by x', y', z'; aka x_, y_, z_
+        float x_ = 0.01f, y_ = 0.01f, z_ = 0.0f;
+        // w = w + (x * x_) + (y * y_) + (z * z_);
+        x += x_;
+        y += y_;
+      }
+
+      simple_shader_test.vertex_buffer().Bind();
+      glBufferData(simple_shader_test.vertex_buffer().get_type(),
+                   sizeof(GLfloat) * 16,
+                   simple_shader_test.vertex_buffer_data,
+                   GL_STATIC_DRAW);
+
+      // glBindBuffer(type, buffer_);
+      // glBufferData(type, size_, data_, usage_);
+    }
+
+    window.Prerender();
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    simple_shader_test.Render();
+
+    context.Postrender();
+
+    Sleep(0);
+
+    // We haven't implemented fonts yet, so fps is drawn as window title.
+    sprintf(
+        fps_string, "%lld fps", (i64)1000000 / ticker.passed_since_update());
+    window.Title(fps_string);
   }
 
-  wgl_context.Destroy();
-  window.Destroy();
   return 0;
 }
