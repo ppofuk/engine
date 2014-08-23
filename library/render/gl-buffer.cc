@@ -31,6 +31,6 @@ void GLBufferBase::Create(GLenum type, GLenum usage, void* data, size_t size) {
   Create(type);
 }
 
-void GLBufferBase::Bind() { glBindBuffer(type_, buffer_); }
+void GLBufferBase::Bind() const { glBindBuffer(type_, buffer_); }
 
 }  // namespace render

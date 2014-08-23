@@ -27,7 +27,7 @@ class GLBufferBase {
   void Destroy();
 
   // Bind the current buffer.
-  void Bind();
+  void Bind() const;
 
   // Two buffer objects are logically the same if they have the same GL object
   // number.
