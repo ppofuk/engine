@@ -1,6 +1,6 @@
-#version 110
+#version 120
 
-attribute vec4 position;
+attribute vec4 coord;
 uniform float aspect;
 uniform float fov;
 varying vec2 texcoord;
@@ -13,6 +13,21 @@ mat4 ViewFrustum(float angle_of_view,
               vec4(0.0, aspect_ratio / tan(angle_of_view), 0.0, 0.0),
               vec4(0.0, 0.0, (z_far + z_near) / (z_far - z_near), 1.0),
               vec4(0.0, 0.0, -2.0 * z_far * z_near / (z_far - z_near), 0.0));
+}
+
+mat4 Frustum(float l, float r, float b, float t, float n, float f) {
+  return mat4(
+      vec4(2 * n / (r - l), 0.0, 0.0, 0.0),
+      vec4(0.0, 2 * n / (t - b), 0.0, 0.0),
+      vec4((r + l) / (r - l), (t + b) / (t - b), -(f + n) / (f - n), -1),
+      vec4(0.0, 0.0, -2 * f * n / (f - n), 0));
+}
+
+mat4 Ortho(float l, float r, float b, float t, float n, float f) {
+  return mat4(vec4(2.0 / (r - l), 0.0, 0.0, (l + r) / (l - r)),
+              vec4(0.0, 2.0 / (t - b), 0.0, (b + t) / (b - t)),
+              vec4(0.0, 0.0, 2.0 / (n - f), (n + f) / (n - f)),
+              vec4(0.0, 0.0, 0.0, 1.0));
 }
 
 mat4 Scale(float x, float y, float z) {
@@ -44,7 +59,9 @@ mat4 RotateOnZ(float theta) {
 }
 
 void main() {
-  gl_Position = ViewFrustum(radians(fov), aspect, 0.5, 5.0) *
-                Translate(0.0, 0.0, 3.0) * position;
-  texcoord = position.xy * vec2(0.5) + vec2(0.5);
+  // gl_Position = ViewFrustum(radians(fov), aspect, 0.5, 50.0) *
+  //               Translate(0.0, 0.0, 3.0) * coord;
+  gl_Position = transpose(Ortho(0.0, 1920.0, 1680.0, 0.0, -1.0, 1.0)) * Scale(800.0, 800.0, 100.0) * coord;
+
+  texcoord = coord.xy * vec2(0.5) + vec2(0.5);
 }
