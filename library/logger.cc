@@ -19,8 +19,8 @@ void Logger::Log(int msg) const {
 }
 
 void Logger::Log(long long msg) const {
-  fprintf(file_, "%I64d", msg);
-  fprintf(stdout, "%I64d", msg);
+  fprintf(file_, "%lld", msg);
+  fprintf(stdout, "%lld", msg);
 }
 
 void Logger::Log(float msg) const {
