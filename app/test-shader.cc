@@ -102,7 +102,7 @@ void SimpleShaderTest::InitProgram() {
     return;
   }
 
-  position_attribute_.Locate(program_, "position");
+  position_attribute_.Locate(program_, "coord");
   texture_uniform_.Locate(program_, "texture");
   aspect_uniform_.Locate(program_, "aspect");
   fov_uniform_.Locate(program_, "fov");
