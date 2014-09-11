@@ -46,6 +46,8 @@ class GLShaderObject : public util::HasLog {
   void CreateVertexShader(const char* shader_source);
   void CreateFragmentShader(const char* shader_source);
 
+  static void DeleteShader(GLuint shader) { glDeleteShader(shader); }
+
  private:
   char* shader_source_;
   GLuint shader_;
