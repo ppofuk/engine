@@ -53,6 +53,7 @@ class Reader {
     }
   }
 
+
   Type* Read(bool binary = false) {
     if (!file_) {
       return NULL;

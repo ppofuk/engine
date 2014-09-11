@@ -28,8 +28,11 @@
         'static-compile-options.h',
         'memory-pool.h',
         'memory.h',
+        'vector2.h',
+        'vector3.h',
+        'vector4.h',
         #Render
-        'render/texture-abstract.h',
+        'render/texture-loader-abstract.h',
         'render/texture-loader.cc',
         # Render: OpenGL stuff:
         'render/gl-buffer.h',
