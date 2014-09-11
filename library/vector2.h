@@ -15,7 +15,7 @@ class Vector2 {
  public:
   Vector2() {}
   Vector2(T x, T y) : x_(x), y_(y) {}
-  Vector2(T* ptr) : x_(ptr[0]), y_(ptr[1])) {}
+  Vector2(T* ptr) : x_(ptr[0]), y_(ptr[1]) {}
 
   // Returns true if all components are 0.
   bool IsZero() const { return x() == y() == 0; }

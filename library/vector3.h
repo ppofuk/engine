@@ -66,7 +66,7 @@ inline bool operator==(const Vector3<T>& lhs, const Vector3<T>& rhs) {
 
 template <typename T>
 inline Vector3<T> operator-(const Vector3<T>& v) {
-  return Vector3<T>(-v.x(), -v.y(), -v.z()));
+  return Vector3<T>(-v.x(), -v.y(), -v.z());
 }
 
 template <typename T>
