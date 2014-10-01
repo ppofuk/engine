@@ -17,9 +17,11 @@ class AppShader {
  public:
   AppShader() : is_init_(false) {}
 
-  void Init() { program_.Init(); }
+  virtual void Init() { program_.Init(); }
 
-  void Destroy() { program_.Delete(); }
+  virtual void Destroy() { program_.Delete(); }
+
+  virtual void Render() {}
 
   template <typename... Args>
   void LoadShaders(const char* path, Args... paths) {
@@ -55,6 +57,33 @@ class AppShader {
     LoadShaders(paths...);
   }
 
+  void InitDefaultBuffers() {
+    static GLfloat vertex_buffer_data[] = {-1.0f,
+                                           -1.0f,
+                                           0.0f,
+                                           1.0f,
+                                           1.0f,
+                                           -1.0f,
+                                           0.0f,
+                                           1.0f,
+                                           -1.0f,
+                                           1.0f,
+                                           0.0f,
+                                           1.0f,
+                                           1.0f,
+                                           1.0f,
+                                           0.0f,
+                                           1.0f};
+
+    static GLushort element_buffer_data[] = {0, 1, 2, 3};
+
+    render::CreateVertexBuffer(
+        &vertex_buffer_, GL_STATIC_DRAW, vertex_buffer_data, 16);
+
+    render::CreateElementBuffer(
+        &element_buffer_, GL_STATIC_DRAW, element_buffer_data, 4);
+  }
+
  protected:
   void LoadShaders() {
     program_.Link();
@@ -73,12 +102,13 @@ class AppShader {
   bool is_init_;
   std::vector<GLuint> shaders_;
   render::GLProgram program_;
+  render::GLBuffer<GLfloat> vertex_buffer_;
+  render::GLBuffer<GLushort> element_buffer_;
 };
 
 void TestAppShader() {
   AppShader app_shader;
   app_shader.LoadShaders("1.vert", "2.vert", "3.vert");
-
 }
 
 }  // namespace app
