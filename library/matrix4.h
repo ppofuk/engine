@@ -10,10 +10,18 @@ namespace core {
 template <typename T>
 class Matrix4 {
  public:
+  Matrix4() {}
+  Matrix4(Vector4<T> x, Vector4<T> y, Vector4<T> z, Vector4<T> w) {
+    rows_[0] = x;
+    rows_[1] = y;
+    rows_[2] = z;
+    rows_[3] = w;
+  }
+
   T* operator[](size_t i) { return rows_[i].type_array(); }
   T* type_array() const { return rows_[0].type_array(); }
 
-  Matrix4<T> Transpose() const {
+  Matrix4<T> Transpose() {
     Matrix4<T> transposed = *this;
     transposed[0][1] = *this[1][0];
     transposed[0][2] = *this[2][0];
@@ -40,9 +48,15 @@ class Matrix4 {
   Vector4<T> rows_[4];
 };
 
+typedef Matrix4<f32> Matrix4f;
+
 void TestMatrix4() {
-  Matrix4<float> mat4;
-  mat4[1][2] = 2;
+  Matrix4<f32> mat(Vector4f(1, 2, 3, 4),
+                   Vector4f(1, 2, 3, 4),
+                   Vector4f(1, 2, 3, 4),
+                   Vector4f(1, 2, 3, 4));
+  mat[2][1] = 1;
+  mat = mat.Transpose();
 }
 
 }  // namespace core
