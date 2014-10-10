@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #include "gl-texture-2d.h"
+#include "gl-types.h"
 #include <assert.h>
 
 namespace render {
@@ -13,18 +14,15 @@ GLTexture::GLTexture()
       gl_mag_filter_(GL_LINEAR),
       gl_wrap_s_(GL_CLAMP),
       gl_wrap_t_(GL_CLAMP),
-      texture_abstract_(0) {}
+      texture_abstract_(0) {
+}
 
 void GLTexture::Generate() {
   assert(texture_abstract_ != NULL);
   assert(texture_abstract_->get_texture_data() != NULL);
 
-  glGenTextures(1, &gl_texture_);
-  glBindTexture(GL_TEXTURE_2D, gl_texture_);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_min_filter_);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_mag_filter_);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, gl_wrap_s_);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, gl_wrap_t_);
+  ApplyFilters();
+
   glTexImage2D(GL_TEXTURE_2D,
                0,
                texture_abstract_->get_gl_alpha(),
@@ -36,10 +34,26 @@ void GLTexture::Generate() {
                texture_abstract_->get_texture_data());
 }
 
-void GLTexture::Bind() {
+void GLTexture::Bind() const {
+  glBindTexture(GL_TEXTURE_2D, gl_texture_);
+}
+
+void GLTexture::Bind(size_t index) const {
+  glActiveTexture(GLActiveTextureIndex(index));
+  Bind();
+}
+
+void GLTexture::ApplyFilters() {
+  glBindTexture(GL_TEXTURE_2D, gl_texture_);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_min_filter_);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_mag_filter_);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, gl_wrap_s_);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, gl_wrap_t_);
+}
+
+void GLTexture::EnableBlending() {
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glBindTexture(GL_TEXTURE_2D, gl_texture_);
 }
 
 }  // namespace render

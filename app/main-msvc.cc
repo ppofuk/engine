@@ -7,8 +7,7 @@
 #include "win32/wgl-context.h"
 #include "reader-inl.h"
 #include "time-ticker.h"
-
-#include "test-shader.h"
+#include "test-gl-sprite-shader.h"
 
 bool CheckResourceExistance() {
   // This is only for testing.
@@ -27,9 +26,8 @@ bool CheckResourceExistance() {
 INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
   core::Window window(instance);
   core::WGLContext context;
-  core::TimeTicker ticker, ticker_on_30_fps;
-
-  app::SimpleShaderTest simple_shader_test;
+  core::TimeTicker ticker;
+  app::TestGLSpriteShader test_shader;
 
   char fps_string[16];
 
@@ -48,15 +46,7 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
   window.Show();
   glViewport(0, 0, window.width(), window.height());
 
-  simple_shader_test.ReadResources("resources/simple-vertex.vs",
-                                   "resources/simple-fragment.vs",
-                                   "resources/actor.png");
-  simple_shader_test.InitBuffersAndTextures();
-  simple_shader_test.InitShaders();
-  simple_shader_test.InitProgram();
-
-  simple_shader_test.set_fov(-75);
-  simple_shader_test.set_aspect_ratio(window.width() / window.height());
+  test_shader.Init();
 
   while (window.is_init()) {
     ticker.Update();
@@ -66,9 +56,9 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
       glViewport(0, 0, window.width(), window.height());
     }
     if (event == core::kDestroyNotify) {
+      test_shader.Destroy();
       context.Destroy();
       window.Destroy();
-      simple_shader_test.Destroy();
       return 0;
     }
 
@@ -80,46 +70,25 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
       window.Fullscreen(!window.is_fullscreen());
     }
 
-    if (event == core::kMouseWheel) {
-      if (window.mouse_wheel_distance() < 0) {
-        if (simple_shader_test.fov() + 1 < 180)
-          simple_shader_test.set_fov(simple_shader_test.fov() + 1);
-      } else {
-        if (simple_shader_test.fov() - 1 > -180)
-          simple_shader_test.set_fov(simple_shader_test.fov() - 1);
-      }
-    }
+    // if (event == core::kMouseWheel) {
+    //   if (window.mouse_wheel_distance() < 0) {
+    //     if (simple_shader_test.fov() + 1 < 180)
+    //       simple_shader_test.set_fov(simple_shader_test.fov() + 1);
+    //   } else {
+    //     if (simple_shader_test.fov() - 1 > -180)
+    //       simple_shader_test.set_fov(simple_shader_test.fov() - 1);
+    //   }
+    // }
 
-    if (ticker_on_30_fps.Tick(41666666)) {
+    if (ticker.Tick(41666666)) {
       // 30hz tick
-      for (size_t i = 0; i < 4; ++i) {
-        float& x = simple_shader_test.vertex_buffer_data[4*i];
-        float& y = simple_shader_test.vertex_buffer_data[4*i + 1];
-        float& z = simple_shader_test.vertex_buffer_data[4*i + 2];
-        float& w = simple_shader_test.vertex_buffer_data[4*i + 3];
 
-        // Translate by x', y', z'; aka x_, y_, z_
-        float x_ = 0.01f, y_ = 0.01f, z_ = 0.0f;
-        // w = w + (x * x_) + (y * y_) + (z * z_);
-        x += x_;
-        y += y_;
-      }
-
-      simple_shader_test.vertex_buffer().Bind();
-      glBufferData(simple_shader_test.vertex_buffer().get_type(),
-                   sizeof(GLfloat) * 16,
-                   simple_shader_test.vertex_buffer_data,
-                   GL_STATIC_DRAW);
-
-      // glBindBuffer(type, buffer_);
-      // glBufferData(type, size_, data_, usage_);
     }
 
     window.Prerender();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    simple_shader_test.Render();
-
+    test_shader.Render();
     context.Postrender();
 
     Sleep(0);

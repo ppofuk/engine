@@ -15,6 +15,9 @@ enum StaticArraySizes {
 
 enum GLShaderCompileOptions { kOnDebugOutputShaderSource = false };
 
+#define kGLShaderMaxNumberOfShaders 24
+#define kGLShaderShaderSourceSize 8192*2
+
 // Enumerations of some used types for RTTI or templating.
 enum Types {
   kUknownType,
@@ -22,6 +25,11 @@ enum Types {
 
 
 #define kDefaultPoolObjectCount 4096*4096
+
+namespace render {
+  static const char* gl_sprite_shader_vert_source = "shader/sprite.vert";
+  static const char* gl_sprite_shader_frag_source = "shader/sprite.frag";
+}
 
 namespace util {
 static const char* log_path_file = "log.txt";

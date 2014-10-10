@@ -13,6 +13,9 @@
       'include_dirs': [
         'library'
       ],
+      'sources': [
+        'test-gl-sprite-shader.cc'
+      ],
       'conditions': [
           ['OS=="win"', {
             'defines': [

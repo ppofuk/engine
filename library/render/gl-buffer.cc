@@ -5,9 +5,11 @@
 namespace render {
 
 GLBufferBase::GLBufferBase(GLenum usage, void* data, size_t size)
-    : data_(data), size_(size), usage_(usage), buffer_(0) {}
+    : data_(data), size_(size), usage_(usage), buffer_(0) {
+}
 
-GLBufferBase::GLBufferBase() : data_(NULL), size_(0), buffer_(0) {}
+GLBufferBase::GLBufferBase() : data_(NULL), size_(0), buffer_(0) {
+}
 
 void GLBufferBase::Destroy() {
   if (buffer_) {
@@ -31,6 +33,28 @@ void GLBufferBase::Create(GLenum type, GLenum usage, void* data, size_t size) {
   Create(type);
 }
 
-void GLBufferBase::Bind() const { glBindBuffer(type_, buffer_); }
+void GLBufferBase::Bind() const {
+  glBindBuffer(type_, buffer_);
+}
+
+void* GLBufferBase::Map(GLenum access) const {
+  if (buffer_) {
+    Bind();
+    return glMapBuffer(type_, access);
+  }
+  return NULL;
+}
+
+bool GLBufferBase::Unmap() const {
+  if (glUnmapBuffer(type_) == GL_TRUE)
+    return true;
+  else
+    return false;
+}
+
+void GLBufferBase::UnbindAll() {
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
 
 }  // namespace render

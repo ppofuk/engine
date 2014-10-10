@@ -29,11 +29,26 @@ class GLBufferBase {
   // Bind the current buffer.
   void Bind() const;
 
+  // Maps the buffer object into client's memory. Returns NULL on faliure.
+  // |access| flag specifies what to do with the mapped data: read, write or
+  // both. Use:
+  //    GL_READ_ONLY
+  //    GL_WRITE_ONLY
+  //    GL_READ_WRITE
+  void* Map(GLenum access) const;
+
+  // After modifiying data in client memory with |Map|, the buffer must be
+  // unmapped from client memory. If the method returns false, the contents of
+  // the buffer bacame currupted and the data must be resubmited.
+  bool Unmap() const;
+
   // Two buffer objects are logically the same if they have the same GL object
   // number.
   bool operator==(const GLBufferBase& rhs) {
     return (buffer_ == rhs.get_buffer());
   }
+
+  static void UnbindAll();
 
  private:
   void* data_;
@@ -68,6 +83,8 @@ class GLBuffer<void> {
     return (buffer_base_ == buffer.buffer_base());
   }
 
+  inline bool Unmap() const { return buffer_base_.Unmap(); }
+
   // Returns the actual size of pointed array in bytes.
   virtual size_t size() const { return buffer_base_.get_size(); }
 
@@ -89,6 +106,12 @@ class GLBuffer<GLfloat> : public GLBuffer<void> {
         type, usage, static_cast<void*>(data), size * sizeof(GLfloat));
   }
 
+  inline GLfloat* Map(GLenum access) const {
+    return static_cast<GLfloat*>(buffer_base_.Map(access));
+  }
+
+  inline bool Unmap() const { return buffer_base_.Unmap(); }
+
   // Returns the number of elements in pointed array, not the size of array.
   // If you need to get the actual size you can use |buffer_base().get_size()|,
   // or multiply the returned value from this method by sizeof(GLfloat).
@@ -109,6 +132,12 @@ class GLBuffer<GLint> : public GLBuffer<void> {
         type, usage, static_cast<void*>(data), size * sizeof(GLint));
   }
 
+  inline GLint* Map(GLenum access) const {
+    return static_cast<GLint*>(buffer_base_.Map(access));
+  }
+
+  inline bool Unmap() const { return buffer_base_.Unmap(); }
+
   // Returns the number of elements in pointed array, not the size of array.
   // If you need to get the actual size you can use |buffer_base().get_size()|,
   // or multiply the returned value from this method by sizeof(GLint).
@@ -128,6 +157,12 @@ class GLBuffer<GLushort> : public GLBuffer<void> {
     buffer_base_.Create(
         type, usage, static_cast<void*>(data), size * sizeof(GLushort));
   }
+
+  inline GLushort* Map(GLenum access) const {
+    return static_cast<GLushort*>(buffer_base_.Map(access));
+  }
+
+  inline bool Unmap() const { return buffer_base_.Unmap(); }
 
   // Returns the number of elements in pointed array, not the size of array.
   // If you need to get the actual size you can use |buffer_base().get_size()|,

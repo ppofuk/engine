@@ -107,6 +107,9 @@ void SimpleShaderTest::InitProgram() {
   aspect_uniform_.Locate(program_, "aspect");
   fov_uniform_.Locate(program_, "fov");
   log << util::kLogDateTime << " Program linked successfuly!\n";
+
+  glActiveTexture(GL_TEXTURE0);
+  texture_.Bind();
 }
 
 void SimpleShaderTest::Render() {
@@ -115,8 +118,6 @@ void SimpleShaderTest::Render() {
   aspect_uniform_.Pass(aspect_ratio_);
   fov_uniform_.Pass(static_cast<GLfloat>(fov_));
 
-  glActiveTexture(GL_TEXTURE0);
-  texture_.Bind();
   texture_uniform_.Pass(static_cast<GLint>(0));
 
   vertex_buffer_.Bind();

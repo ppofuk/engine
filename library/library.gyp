@@ -31,9 +31,17 @@
         'vector2.h',
         'vector3.h',
         'vector4.h',
-        #Render
+        'matrix4.h',
+        'matrix-utility.h',
+        'matrix-utility.cc',
+        'c-json.h',
+        'c-json.cc',
+        'properties.h',
+        'properties.cc',
+        # Render
         'render/texture-loader-abstract.h',
         'render/texture-loader.cc',
+        'render/texture-loader.h',
         # Render: OpenGL stuff:
         'render/gl-buffer.h',
         'render/gl-buffer.cc',
@@ -46,7 +54,11 @@
         'render/gl-uniform.h',
         'render/gl-uniform.cc',
         'render/gl-attribute.h',
-        'render/gl-attribute.cc'
+        'render/gl-attribute.cc',
+        'render/gl-shader.h',
+        'render/gl-shader.cc',
+        'render/gl-sprite-shader.h',
+        'render/gl-sprite-shader.cc'
       ],
       'direct_dependent_settings': {
         'include_dirs': ['.'],

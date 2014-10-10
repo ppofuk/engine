@@ -19,7 +19,7 @@ class Matrix4 {
   }
 
   T* operator[](size_t i) { return rows_[i].type_array(); }
-  T* type_array() const { return rows_[0].type_array(); }
+  const T* type_array() const { return rows_[0].type_array(); }
 
   Matrix4<T> Transpose() {
     Matrix4<T> transposed = *this;
@@ -49,15 +49,6 @@ class Matrix4 {
 };
 
 typedef Matrix4<f32> Matrix4f;
-
-void TestMatrix4() {
-  Matrix4<f32> mat(Vector4f(1, 2, 3, 4),
-                   Vector4f(1, 2, 3, 4),
-                   Vector4f(1, 2, 3, 4),
-                   Vector4f(1, 2, 3, 4));
-  mat[2][1] = 1;
-  mat = mat.Transpose();
-}
 
 }  // namespace core
 

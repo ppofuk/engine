@@ -4,15 +4,19 @@
 #ifndef OBSIDIAN_TEXTURE_H_
 #define OBSIDIAN_TEXTURE_H_
 
-#include "logger.h"
+#include "../logger.h"
+#include "../basic-types.h"
 
 namespace render {
+
+typedef i16 TextureHandleType;
 
 class TextureLoaderAbstract : public util::HasLog {
  public:
   typedef unsigned char byte;
 
-  TextureLoaderAbstract() : has_alpha_(false), width_(0), height_(0) {}
+  TextureLoaderAbstract()
+      : has_alpha_(false), width_(0), height_(0), handle_(-1) {}
 
   virtual bool Load(const char* file_name) = 0;
   // Deallocate all junk, mostly texture data
@@ -29,12 +33,17 @@ class TextureLoaderAbstract : public util::HasLog {
   // For internal use with opengl renderer
   inline int get_gl_alpha() { return gl_alpha_; }
 
+  inline TextureHandleType get_handle() { return handle_; }
+
+  inline void set_handle(TextureHandleType handle) { handle_ = handle; }
+
  protected:
   bool has_alpha_;
   int width_, height_;
   byte* texture_data_;
 
   int gl_alpha_;
+  TextureHandleType handle_;
 };
 
 }  // namespace resource

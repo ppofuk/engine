@@ -7,7 +7,10 @@
 #include "GL/glew.h"
 #include "texture-loader-abstract.h"
 
+#include "texture.h"
+
 namespace render {
+
 class GLTexture {
  public:
   GLTexture();
@@ -28,6 +31,9 @@ class GLTexture {
   void set_gl_wrap_s(GLint gl_wrap_s) { gl_wrap_s_ = gl_wrap_s; }
   void set_gl_wrap_t(GLint gl_wrap_t) { gl_wrap_t_ = gl_wrap_t; }
 
+  // Will apply min, mag, wrap_s and wrap_t filtering.
+  void ApplyFilters();
+
   TextureLoaderAbstract* get_texture_loader() const {
     return texture_abstract_;
   }
@@ -39,7 +45,16 @@ class GLTexture {
   // gl_* parameters.
   void Generate();
 
-  void Bind();
+  // Normal glBindTexture.
+  void Bind() const;
+
+  // Uses glActiveTexture on index and binds the texture.
+  void Bind(size_t index) const;
+
+  // Enable texture blendings.
+  static void EnableBlending();
+
+  u8 bound_to_active_texture_unite() const { return bound_to_active_tu_; }
 
  private:
   GLint gl_alpha_;
@@ -49,8 +64,11 @@ class GLTexture {
   GLint gl_wrap_s_;
   GLint gl_wrap_t_;
 
+  u8 bound_to_active_tu_; // Note that 32 is invalid, aka. unsigned.
   TextureLoaderAbstract* texture_abstract_;
 };
+
+typedef Texture<GLTexture> DefaultGLTexture;
 
 }  // namespace render
 

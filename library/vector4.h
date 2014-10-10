@@ -49,10 +49,21 @@ class Vector4 {
   T z() const { return z_; }
   T w() const { return w_; }
 
+  // Alternative notations (commonly used)
+  T u1() const { return x_; }
+  T u2() const { return y_; }
+  T v1() const { return z_; }
+  T v2() const { return w_; }
+
   void set_x(T x) { x_ = x; }
   void set_y(T y) { y_ = y; }
   void set_z(T z) { z_ = z; }
   void set_w(T w) { w_ = w; }
+
+  void set_u1(T x) { x_ = x; }
+  void set_u2(T y) { y_ = y; }
+  void set_v1(T z) { z_ = z; }
+  void set_v2(T w) { w_ = w; }
 
   // Unsafe but it works.
   operator T*() { return &x_; }
@@ -63,6 +74,7 @@ class Vector4 {
   Vector3<T> ToVector3() const { return Vector3<T>(x_, y_, z_); }
 
   T* type_array() { return &x_; }
+  const T* type_array() const { return &x_; }
 
  private:
   T x_;

@@ -12,7 +12,7 @@ template <typename T>
 class Vector3 {
  public:
   Vector3() {}
-  Vector3(T x, T y, T z, T w) : x_(x), y_(y), z_(z) {}
+  Vector3(T x, T y, T z) : x_(x), y_(y), z_(z) {}
   Vector3(T* ptr) : x_(ptr[0]), y_(ptr[1]), z_(ptr[2]) {}
 
   explicit Vector3(const Vector2<T>& other)

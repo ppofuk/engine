@@ -9,6 +9,8 @@
 #include "gl-program.h"
 #include "../static-compile-options.h"
 
+#include "../matrix-utility.h"
+
 namespace render {
 
 class GLUniform {
@@ -28,6 +30,7 @@ class GLUniform {
   void Pass(GLuint value);
   void Pass(GLfloat* values, size_t count);
   void Pass(GLint* values, size_t count);
+  void Pass(const core::Matrix4f& values, bool transpose = true);
 
  protected:
   char uniform_name_[kUniformNameSize];

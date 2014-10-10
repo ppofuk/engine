@@ -45,4 +45,9 @@ void GLUniform::Pass(GLint* values, size_t count) {
   glUniform1iv(location_, count, values);
 }
 
+void GLUniform::Pass(const core::Matrix4f& values, bool transpose) {
+  glUniformMatrix4fv(
+      location_, 1, transpose, values.type_array());
+}
+
 }  // namespace render
