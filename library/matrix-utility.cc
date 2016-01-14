@@ -36,21 +36,18 @@ void Frustum::Set(f32 l, f32 r, f32 b, f32 t, f32 n, f32 f) {
   mat4_ = Calculate(l, r, b, t, n, f);
 }
 
-Matrix4f ViewFrustum::Calculate(f32 angle_of_view,
-                                f32 aspect_ratio,
-                                f32 z_near,
-                                f32 z_far) {
-  return Matrix4f(
-      Vector4f(1.0 / tan(angle_of_view), 0.0, 0.0, 0.0),
-      Vector4f(0.0, aspect_ratio / tan(angle_of_view), 0.0, 0.0),
-      Vector4f(0.0, 0.0, (z_far + z_near) / (z_far - z_near), 1.0),
-      Vector4f(0.0, 0.0, -2.0 * z_far * z_near / (z_far - z_near), 0.0));
+Matrix4f Perspective::Calculate(f32 fov, f32 a, f32 n, f32 f) {
+  float d = 1 / tan(fov / 2);
+  return Matrix4f(Vector4f(d / a, 0, 0, 0),
+                  Vector4f(0, d, 0, 0),
+                  Vector4f(0, 0, (n + f) / (n - f), (2 * n * f) / (n - f)),
+                  Vector4f(0, 0, -1, 0));
 }
 
-ViewFrustum::ViewFrustum() {
+Perspective::Perspective() {
 }
 
-ViewFrustum::ViewFrustum(f32 angle_of_view,
+Perspective::Perspective(f32 angle_of_view,
                          f32 aspect_ratio,
                          f32 z_near,
                          f32 z_far)
@@ -61,7 +58,7 @@ ViewFrustum::ViewFrustum(f32 angle_of_view,
       mat4_(Calculate(angle_of_view, aspect_ratio, z_near, z_far)) {
 }
 
-void ViewFrustum::Set(f32 angle_of_view,
+void Perspective::Set(f32 angle_of_view,
                       f32 aspect_ratio,
                       f32 z_near,
                       f32 z_far) {

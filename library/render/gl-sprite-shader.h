@@ -51,15 +51,14 @@ class GLSpriteShader : public GLShader {
 
   // Sprite texcoord vector is ignored.
   // rect is a rectangle bounded inside (0, 0, texture width, texture height).
-  // void Draw(const Sprite<GLTexture>& sprite, core::Vector4f rect);
-  // void Draw(const Sprite<GLTexture>& sprite, f32 u1, f32 u2, f32 v1, f32 v2);
+  void Draw(const Sprite<GLTexture>& sprite, core::Vector4f rect);
 
   u8 get_active_texture() const { return active_texture_; }
   void set_active_texture(u8 active_texture) {
     active_texture_ = active_texture;
   }
 
- private:
+ protected:
   // Pass the x, y, z, width, height uniforms, aka. the sprite dimension
   // properties.
   inline void PassDimensionUniforms(f32 x,

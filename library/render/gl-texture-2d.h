@@ -31,6 +31,9 @@ class GLTexture {
   void set_gl_wrap_s(GLint gl_wrap_s) { gl_wrap_s_ = gl_wrap_s; }
   void set_gl_wrap_t(GLint gl_wrap_t) { gl_wrap_t_ = gl_wrap_t; }
 
+  inline f32 width() { return texture_abstract_->get_width(); }
+  inline f32 height() { return texture_abstract_->get_height(); }
+
   // Will apply min, mag, wrap_s and wrap_t filtering.
   void ApplyFilters();
 

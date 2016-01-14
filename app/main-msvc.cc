@@ -8,6 +8,7 @@
 #include "reader-inl.h"
 #include "time-ticker.h"
 #include "test-gl-sprite-shader.h"
+#include "test-shader.h"
 
 bool CheckResourceExistance() {
   // This is only for testing.
@@ -28,6 +29,7 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
   core::WGLContext context;
   core::TimeTicker ticker;
   app::TestGLSpriteShader test_shader;
+  // app::SimpleShaderTest simple_shader_test;
 
   char fps_string[16];
 
@@ -46,7 +48,15 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
   window.Show();
   glViewport(0, 0, window.width(), window.height());
 
+  //
   test_shader.Init();
+  // simple_shader_test.ReadResources("resources/simple-vertex.vs",
+  //                                 "resources/simple-fragment.vs",
+  //                                  "resources/actor.png");
+  // simple_shader_test.InitBuffersAndTextures();
+  // simple_shader_test.InitShaders();
+  // simple_shader_test.InitProgram();
+  //
 
   while (window.is_init()) {
     ticker.Update();
@@ -57,6 +67,7 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
     }
     if (event == core::kDestroyNotify) {
       test_shader.Destroy();
+      // simple_shader_test.Destroy();
       context.Destroy();
       window.Destroy();
       return 0;
@@ -70,25 +81,42 @@ INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
       window.Fullscreen(!window.is_fullscreen());
     }
 
-    // if (event == core::kMouseWheel) {
-    //   if (window.mouse_wheel_distance() < 0) {
-    //     if (simple_shader_test.fov() + 1 < 180)
-    //       simple_shader_test.set_fov(simple_shader_test.fov() + 1);
-    //   } else {
-    //     if (simple_shader_test.fov() - 1 > -180)
-    //       simple_shader_test.set_fov(simple_shader_test.fov() - 1);
-    //   }
-    // }
+    if (window.AsyncIsKeyPressed(VK_W)) {
+      test_shader.get_actor()->position().Add(core::Vector4f(0, 1, 0, 0));
+    }
+
+    if (window.AsyncIsKeyPressed(VK_S)) {
+      test_shader.get_actor()->position().Add(core::Vector4f(0, -1, 0, 0));
+    }
+
+    if (window.AsyncIsKeyPressed(VK_A)) {
+      test_shader.get_actor()->position().Add(core::Vector4f(-1, 0, 0, 0));
+    }
+
+    if (window.AsyncIsKeyPressed(VK_D)) {
+      test_shader.get_actor()->position().Add(core::Vector4f(1, 0, 0, 0));
+    }
+
+    if (event == core::kMouseWheel) {
+      if (window.mouse_wheel_distance() < 0) {
+        test_shader.get_background()->position().Add(
+            core::Vector4f(0, 0, 1000, 0));
+      } else {
+        test_shader.get_background()->position().Add(
+            core::Vector4f(0, 0, -1000, 0));
+      }
+    }
 
     if (ticker.Tick(41666666)) {
       // 30hz tick
-
+      test_shader.IncreaseFrame();
     }
 
     window.Prerender();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     test_shader.Render();
+    // simple_shader_test.Render();
     context.Postrender();
 
     Sleep(0);

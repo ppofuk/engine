@@ -38,11 +38,8 @@ void GLBufferBase::Bind() const {
 }
 
 void* GLBufferBase::Map(GLenum access) const {
-  if (buffer_) {
-    Bind();
-    return glMapBuffer(type_, access);
-  }
-  return NULL;
+  Bind();
+  return glMapBuffer(type_, access);
 }
 
 bool GLBufferBase::Unmap() const {

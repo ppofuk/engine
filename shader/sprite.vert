@@ -1,9 +1,10 @@
 #version 120
 
-attribute vec4 coord;
+attribute vec4 coords;
 attribute vec2 texcoords;
 
-uniform mat4 view_frustum;
+uniform mat4 projection;
+uniform mat4 view;
 
 uniform float x;
 uniform float y;
@@ -45,12 +46,9 @@ mat4 RotateOnZ(float theta) {
 }
 
 void main() {
-  // gl_Position = ViewFrustum(radians(fov), aspect, 0.5, 50.0) *
-  //               Translate(0.0, 0.0, 3.0) * coord;
-  gl_Position =
-      view_frustum *
-      Scale(width, height, 0.0) * RotateOnX(radians(rx)) *
-      RotateOnZ(radians(rz)) * Translate(x, y, z) * coord;
+  gl_Position = projection * view * Translate(x, y, z) *
+                RotateOnX(radians(rx + 180)) * RotateOnZ(radians(rz)) *
+                Scale(width, height, 0) * coords;
 
   texcoord = texcoords;
 }

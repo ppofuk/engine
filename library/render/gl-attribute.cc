@@ -20,7 +20,7 @@ void GLAttributeBase::Locate(const render::GLProgram& program,
   location_ = glGetAttribLocation(program_, attrib_name_);
 
 #ifdef _DEBUG
-  if (location_ == 1) {
+  if (location_ == -1) {
     util::Log << util::kLogDateTime << ": Warning! " << __FILE__ << ": "
               << __LINE__ << " location_ is -1 for " << attrib_name << " \n";
   }

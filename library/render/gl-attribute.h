@@ -66,7 +66,8 @@ class GLAttribute<GLBuffer<T> > : public intern::GLAttributeBase {
                           pair_size,
                           GLTypeEnum<T>::type,
                           normalized,
-                          buffer.buffer_base().get_size() / pair_size,
+                          // buffer.buffer_base().get_size() / pair_size,
+                          0,
                           buffer.get_offset(offset));
   }
 

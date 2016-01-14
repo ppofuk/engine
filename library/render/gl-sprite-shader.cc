@@ -6,8 +6,6 @@
 namespace render {
 
 void GLSpriteShader::OnInit() {
-  util::Log << util::kLogDateTime << " OnInit()\n";
-
   CreateVertexBuffer(
       &positions_buffer_, GL_STATIC_DRAW, intern::sprite_positions, 16);
   CreateElementBuffer(
@@ -55,23 +53,22 @@ void GLSpriteShader::PassDimensionUniforms(f32 x,
   width_uniform_.Pass(width);
   height_uniform_.Pass(height);
   opacity_uniform_.Pass(opacity);
-  PassFrustumUniform();
 }
 
 void GLSpriteShader::PassActiveTexture(u8 texture) {
-  texture_uniform_.Pass(texture);
+  texture_uniform_.Pass(static_cast<GLint>(texture));
 }
 
 void GLSpriteShader::MapTexcoordBuffer(f32 u1, f32 u2, f32 v1, f32 v2) {
-  f32* data = texcoords_buffer_.Map(GL_READ_WRITE);
+  f32* data = texcoords_buffer_.Map(GL_WRITE_ONLY);
   data[0] = u1;
   data[1] = v1;
-  data[2] = u1;
-  data[3] = v2;
-  data[4] = u2;
+  data[2] = u2;
+  data[3] = v1;
+  data[4] = u1;
   data[5] = v2;
   data[6] = u2;
-  data[7] = u1;
+  data[7] = v2;
   texcoords_buffer_.Unmap();
 }
 
@@ -98,10 +95,10 @@ void GLSpriteShader::MapTexcoordBuffer(f32 width,
 void GLSpriteShader::PassAndEnableAttributes() {
   positions_buffer_.Bind();
   positions_attrib_.PassVertexPointer(positions_buffer_, 4);
+  positions_attrib_.Enable();
+
   texcoords_buffer_.Bind();
   texcoords_attrib_.PassVertexPointer(texcoords_buffer_, 2);
-
-  positions_attrib_.Enable();
   texcoords_attrib_.Enable();
 }
 
@@ -115,11 +112,18 @@ void GLSpriteShader::Draw(const Sprite<GLTexture>& sprite) {
   Render(sprite);
 }
 
-
+void GLSpriteShader::Draw(const Sprite<GLTexture>& sprite,
+                          core::Vector4f rect) {
+  MapTexcoordBuffer(
+      sprite.get_texture()->width(), sprite.get_texture()->height(), rect);
+  Render(sprite);
+}
 
 void GLSpriteShader::Render(const Sprite<GLTexture>& sprite) {
+  glEnable(GL_DEPTH_TEST);
   program_.Use();
-  PassFrustumUniform();
+
+  PassProjectionViewUnifroms();
   PassDimensionUniforms(sprite.position().x(),
                         sprite.position().y(),
                         sprite.position().z(),
@@ -130,16 +134,18 @@ void GLSpriteShader::Render(const Sprite<GLTexture>& sprite) {
                         sprite.height(),
                         sprite.opacity());
 
- // TODO: smarter texture binding
- GLTexture::EnableBlending();
- sprite.get_texture()->Bind(active_texture_);
- PassActiveTexture(active_texture_);
+  // TODO: smarter texture binding
+  GLTexture::EnableBlending();
 
- PassAndEnableAttributes();
- indices_buffer_.Bind();
- glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, (void*)0);
+  sprite.get_texture()->Bind(active_texture_);  // This bind should change.
+  PassActiveTexture(active_texture_);
 
- DisableAttributes();
+  PassAndEnableAttributes();
+
+  indices_buffer_.Bind();
+  glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, (void*)0);
+
+  DisableAttributes();
 }
 
 }  // namespace render

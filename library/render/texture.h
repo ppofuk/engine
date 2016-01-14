@@ -20,6 +20,8 @@ class Texture {
     if (texture_loader_.Load(path)) {
       texture_.set_texture_loader(&texture_loader_);
       texture_.Generate();
+    } else {
+      util::Log << util::kLogDateTime << ": Can't load " << path << "!\n";
     }
   }
 

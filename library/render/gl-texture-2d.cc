@@ -21,6 +21,8 @@ void GLTexture::Generate() {
   assert(texture_abstract_ != NULL);
   assert(texture_abstract_->get_texture_data() != NULL);
 
+  glGenTextures(1, &gl_texture_);
+
   ApplyFilters();
 
   glTexImage2D(GL_TEXTURE_2D,

@@ -49,6 +49,28 @@ class Sprite {
     height_ = texture_->get_texture_loader()->get_height();
   }
 
+  // Presumes that texture is a sheet texture with row_count rows and
+  // column_count columns.
+  // Set's the uv textures for the given row, column.
+  // If inverse is true, the sheet will be inversed.
+  void SetSheetPosition(u16 row_count,
+                        u16 row,
+                        u16 column_count,
+                        u16 column,
+                        bool inverse) {
+    row = row_count - row;
+
+    if (inverse) {
+      texcoords_.set_u2((f32)column / column_count);
+      texcoords_.set_u1((f32)(column + 1) / column_count);
+    } else {
+      texcoords_.set_u1((f32)column / column_count);
+      texcoords_.set_u2((f32)(column + 1) / column_count);
+    }
+    texcoords_.set_v2(1 - ((f32)row / row_count));
+    texcoords_.set_v1(1 - ((f32)(row + 1)) / row_count);
+  }
+
  private:
   core::Vector3f position_ = core::Vector3f(0, 0, 0);
   core::Vector3f rotation_ = core::Vector3f(0, 0, 0);

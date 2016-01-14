@@ -6,6 +6,8 @@
 #define OBSIDIAN_STATIC_COMPILE_OPTIONS_H_
 #include "limits.h"
 
+#define GLM_COMPILER 0
+
 // Options like static array sizes and such should be defined here along
 // with corresponding comment on what they effect.
 enum StaticArraySizes {

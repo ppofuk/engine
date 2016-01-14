@@ -28,10 +28,10 @@ class Frustum {
   Matrix4f mat4_;
 };
 
-class ViewFrustum {
+class Perspective {
  public:
-  ViewFrustum();
-  ViewFrustum(f32 angle_of_view, f32 aspect_ratio, f32 z_near, f32 z_far);
+  Perspective();
+  Perspective(f32 angle_of_view, f32 aspect_ratio, f32 z_near, f32 z_far);
   static Matrix4f Calculate(f32 angle_of_view,
                             f32 aspect_ratio,
                             f32 z_near,
@@ -67,6 +67,16 @@ class Ortho {
   f32 n_;
   f32 f_;
   Matrix4f mat4_;
+};
+
+class Identity {
+ public:
+  static Matrix4f Calculate() {
+    return Matrix4f(Vector4f(1, 0, 0, 0),
+                    Vector4f(0, 1, 0, 0),
+                    Vector4f(0, 0, 1, 0),
+                    Vector4f(0, 0, 0, 1));
+  }
 };
 
 }  // namespace core

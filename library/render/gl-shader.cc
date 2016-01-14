@@ -8,12 +8,19 @@ namespace render {
 void GLShader::Init() {
   program_.Init();
   OnInit();
+
   is_init_ = true;
 }
 
 void GLShader::Destroy() {
-  program_.Delete();
   OnDestroy();
+
+  for (; shader_count_; shader_count_--) {
+    render::GLShaderObject::DeleteShader(shader_objects_[shader_count_ - 1]);
+  }
+
+  program_.Delete();
+  is_init_ = false;
 }
 
 void GLShader::AddShader(const char* path, ShaderType shader_type) {
@@ -27,7 +34,7 @@ void GLShader::AddShader(const char* path, ShaderType shader_type) {
 
     if (shader_type == kVertexShader) {
       shader.CreateVertexShader(shader_source);
-    } else
+    } else if (shader_type == kFragmentShader)
       shader.CreateFragmentShader(shader_source);
 
     if (shader.is_vaild()) {
@@ -49,13 +56,10 @@ void GLShader::Compile() {
     util::Log << util::kLogDateTime << ": " << __FILE__ << ": " << __LINE__
               << ": Program link error: "
               << "\n" << program_.InfoLog() << "\n";
-  } else {
-    for (; shader_count_; shader_count_--) {
-      render::GLShaderObject::DeleteShader(shader_objects_[shader_count_ - 1]);
-    }
-
-    view_frustum_uniform_.Locate(program_, "view_frustum");
   }
+  projection_uniform_.Locate(program_, "projection");
+  view_uniform_.Locate(program_, "view");
+  PostCompile();
 }
 
 }  // namespace render

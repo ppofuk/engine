@@ -44,6 +44,15 @@ class Matrix4 {
 
   size_t size() const { return sizeof(T) * 4 * 4; }
 
+  static Matrix4<f32> Idenitity() {
+    return Matrix4<f32>(Vector4f(1, 0, 0, 0),
+                        Vector4f(0, 1, 0, 0),
+                        Vector4f(0, 0, 1, 0),
+                        Vector4f(0, 0, 0, 1));
+  }
+
+
+
  private:
   Vector4<T> rows_[4];
 };

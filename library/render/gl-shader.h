@@ -28,12 +28,18 @@ class GLShader {
   virtual void OnDestroy() {}
   virtual void PostCompile() {}
 
-  void set_view_frustum(core::Matrix4f view_frustum) {
-    view_frustum_ = view_frustum;
+  void set_projection(core::Matrix4f projection) {
+    projection_ = projection;
   }
 
-  inline void PassFrustumUniform() {
-    view_frustum_uniform_.Pass(view_frustum_);
+  void set_view(core::Matrix4f view) {
+    view_ = view;
+  }
+
+  inline void PassProjectionViewUnifroms() {
+    projection_uniform_.Pass(projection_);
+    view_uniform_.Pass(view_);
+
   }
 
   GLProgram& get_program() { return program_; }
@@ -44,8 +50,10 @@ class GLShader {
   size_t shader_count_ = 0;
   GLuint shader_objects_[kGLShaderMaxNumberOfShaders];
   GLProgram program_;
-  core::Matrix4f view_frustum_;
-  GLUniform view_frustum_uniform_;
+  core::Matrix4f projection_;
+  GLUniform projection_uniform_;
+  core::Matrix4f view_;
+  GLUniform view_uniform_;
 };
 
 }  // namespace render

@@ -5,6 +5,8 @@ uniform float aspect;
 uniform float fov;
 varying vec2 texcoord;
 
+uniform mat4 view_frustum;
+
 mat4 ViewFrustum(float angle_of_view,
                  float aspect_ratio,
                  float z_near,
@@ -61,7 +63,9 @@ mat4 RotateOnZ(float theta) {
 void main() {
   // gl_Position = ViewFrustum(radians(fov), aspect, 0.5, 50.0) *
   //               Translate(0.0, 0.0, 3.0) * coord;
-  gl_Position = transpose(Ortho(0.0, 1920.0, 1680.0, 0.0, -1.0, 1.0)) * Scale(800.0, 800.0, 100.0) * coord;
+  // gl_Position = transpose(Ortho(0.0, 1920.0, 1680.0, 0.0, -1.0, 1.0)) *
+  // Scale(800.0, 800.0, 100.0) * coord;
+  gl_Position = view_frustum * Scale(800.0, 800.0, 0.0) * coord;
 
   texcoord = coord.xy * vec2(0.5) + vec2(0.5);
 }
