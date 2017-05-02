@@ -44,6 +44,7 @@
               ],
               'libraries': [
                 '-lGL',
+                '-lGLU',
                 '-lX11'
               ]
             }

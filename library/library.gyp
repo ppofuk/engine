@@ -93,8 +93,8 @@
             ],
             'ldflags': [
               '-lX11',
-              '-lGL',
-              '-lGLU',
+              #'-lGL',
+              #'-lGLU',
               '-lpthread'
             ],
             'defines': [
