@@ -5,7 +5,6 @@
 #include "GL/glew.h"
 #include "window-xlib.h"
 #include "reader-inl.h"
-#include "gl/gl-buffer.h"
 
 #include "test-shader.h"
 
@@ -31,8 +30,7 @@ int main(int argc, char* argv[]) {
 
     glewInit();
 
-    simple_shader_test.ReadResources("resources/base-vertex.vs",
-                                     "resources/simple-vertex.vs",
+    simple_shader_test.ReadResources("resources/simple-vertex.vs",
                                      "resources/simple-fragment.vs",
                                      "resources/actor.png");
     simple_shader_test.InitBuffersAndTextures();
@@ -58,7 +56,7 @@ int main(int argc, char* argv[]) {
       simple_shader_test.Render();
 
       window.Postrender();
-      usleep(10);
+      usleep(1);
     }
   }
 

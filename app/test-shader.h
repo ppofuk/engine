@@ -28,13 +28,13 @@ class SimpleShaderTest : util::HasLog {
   void Render();
   void Destroy();
 
+  void set_aspect_ratio(float aspect_ratio) { aspect_ratio_ = aspect_ratio; }
+  void set_fov(int fov) { fov_ = fov; }
+  int fov() const { return fov_; }
+
   GLfloat vertex_buffer_data[16];
   const render::GLBufferBase& vertex_buffer() const {
     return vertex_buffer_.buffer_base();
-  }
-
-  void set_view_frustum(core::Matrix4f view_frustum) {
-    view_frustum_ = view_frustum;
   }
 
  private:
@@ -46,14 +46,15 @@ class SimpleShaderTest : util::HasLog {
   render::GLProgram program_;
   render::GLAttribute<render::GLBuffer<GLfloat> > position_attribute_;
   render::GLUniform texture_uniform_;
+  render::GLUniform aspect_uniform_;
+  render::GLUniform fov_uniform_;
   render::TextureLoader texture_loader_;
   char vertex_shader_source_[4096];
   char pixel_shader_source_[4096];
   bool all_init_;
 
-  core::Matrix4f view_frustum_;
-
-  render::GLUniform view_frustum_uniform_;
+  float aspect_ratio_;
+  int fov_;
 };
 
 }  // namespace app
