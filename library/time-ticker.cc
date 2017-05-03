@@ -38,7 +38,39 @@ bool TimeTicker::Tick(i64 tick_time) {
 
 #elif defined(OS_LINUX)
 
-// TODO: linux implementation
+void TimeTicker::Save() {
+  time_saved_ = time_on_update();
+}
+
+i64 TimeTicker::time_between() {
+  i64 increment = time_updated_ - time_saved_ < 0 ? 1000000000 : 0;
+  return increment + time_updated_ - time_saved_;
+}
+
+void TimeTicker::Update() {
+  timespec timespec_buffer;
+  clock_gettime(CLOCK_REALTIME, &timespec_buffer);
+  time_updated_ = timespec_buffer.tv_nsec;
+}
+
+i64 TimeTicker::passed_since_update() {
+  timespec timespec_buffer;
+  clock_gettime(CLOCK_REALTIME, &timespec_buffer);
+  i64 increment = timespec_buffer.tv_nsec - time_updated_ < 0 ? 1000000000 : 0;
+  return increment + timespec_buffer.tv_nsec - time_updated_;
+}
+
+bool TimeTicker::Tick(i64 tick_time) {
+  Update();
+  i64 increment = time_between() - tick_time < 0 ? 1000000000 : 0;
+  tick_treshold_ = increment + time_between() - tick_time;
+  if (time_between() >= tick_time) {
+    Save();
+    return true;
+  }
+  return false;
+}
+
 
 #endif  // defined(OS_LINUX) || defined(OS_WINDOWS)
 
