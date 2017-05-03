@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <X11/X.h>
 #include <X11/Xlib.h>
+#include <X11/keysym.h>
 #include "GL/glew.h"
 #include <GL/glx.h>
 
@@ -28,7 +29,7 @@ class WindowXlib : public util::HasLog {
  public:
   WindowXlib();
 
-  void Init(const char* title,
+  bool Init(const char* title,
             i32 x = 0,
             i32 y = 0,
             i32 width = 800,
@@ -39,12 +40,28 @@ class WindowXlib : public util::HasLog {
   // Should be called after rendering is complete.
   void Postrender();
 
+  // Should be called before rendering.
+  void Prerender(); 
+
   // Returns a pending event from internal event queue.
   WindowEventType CheckForEvents();
 
   // Rereads the x and y mouse coordinates. You can access them with method
   // |cursor_x| and |cursor_y|.
   void UpdateCursorPosition();
+
+  // Maps a window to screen. Note, that this is done in |Init|. 
+  // show_param is ignored (it's just for compatibility with win32 version). 
+  void Show(int show_param = 0);
+
+  // Unmaps a window from screen. 
+  void Hide();
+
+  // Sets window title. In X it's called store name. 
+  void Title(const char* title);
+
+  // 
+  short AsyncIsKeyPressed(KeySym virtual_key);
 
   bool is_init() const { return is_init_; }
   XEvent& get_x_event() { return x_event_; }

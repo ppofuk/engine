@@ -13,11 +13,11 @@ WindowXlib::WindowXlib() : is_init_(false) {
   attributes_[4] = None;
 }
 
-void WindowXlib::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
+bool WindowXlib::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
   display_ = XOpenDisplay(NULL);
 
   if (!display_) {
-    return;
+    return false;
   }
 
   root_window_ = XDefaultRootWindow(display_);
@@ -25,7 +25,7 @@ void WindowXlib::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
 
   if (!visual_info_) {
     XCloseDisplay(display_);
-    return;
+    return false;
   }
 
   color_map_ =
@@ -63,7 +63,7 @@ void WindowXlib::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
   if (err != GLEW_OK) {
     log << util::kLogDateTime << ": " << (char*)glewGetErrorString(err) << "\n";
     Destroy();
-    return;
+    return false;
   }
 
   glEnable(GL_DEPTH_TEST);  // TODO(ppofuk): Move?
@@ -76,6 +76,8 @@ void WindowXlib::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
       << "GL version: " << gl_version << "\n" << util::kLogDateTime << ": "
       << "GL vendor: " << gl_vendor << "\n" << util::kLogDateTime << ": "
       << "GL renderer: " << gl_renderer << "\n";
+
+  return true; 
 }
 
 void WindowXlib::Destroy() {
@@ -86,6 +88,18 @@ void WindowXlib::Destroy() {
     XCloseDisplay(display_);
     is_init_ = false;
   }
+}
+
+void WindowXlib::Show(int show_param) {
+  XMapWindow(display_, window_);
+}
+
+void WindowXlib::Hide() {
+  XUnmapWindow(display_, window_); 
+}
+
+void WindowXlib::Title(const char* title) {
+  XStoreName(display_, window_, title);
 }
 
 WindowEventType WindowXlib::CheckForEvents() {
@@ -102,6 +116,8 @@ WindowEventType WindowXlib::CheckForEvents() {
   return kNone;
 }
 
+void WindowXlib::Prerender() {}
+
 void WindowXlib::Postrender() { glXSwapBuffers(display_, window_); }
 
 void WindowXlib::UpdateCursorPosition() {
@@ -114,6 +130,14 @@ void WindowXlib::UpdateCursorPosition() {
                 &win_x_,
                 &win_y_,
                 &mask_);
+}
+
+short WindowXlib::AsyncIsKeyPressed(KeySym virtual_key) {
+  char key_status[32];
+  int keycode = XKeysymToKeycode(display_, virtual_key);
+  
+  XQueryKeymap(display_, key_status);
+  return key_status[keycode / 8] & (1 << (keycode % 8)); 
 }
 
 }  // namespace core
