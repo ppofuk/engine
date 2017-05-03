@@ -3,11 +3,15 @@
 // found in the LICENSE file.
 #include "test-shader.h"
 #include "reader-inl.h"
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 namespace app {
 
-SimpleShaderTest::SimpleShaderTest()
-    : all_init_(false), aspect_ratio_(4.0f / 3.0f), fov_(0) {
+SimpleShaderTest::SimpleShaderTest() : all_init_(false) {
 }
 
 bool SimpleShaderTest::ReadResources(const char* vertex_shader_path,
@@ -104,19 +108,22 @@ void SimpleShaderTest::InitProgram() {
 
   position_attribute_.Locate(program_, "coord");
   texture_uniform_.Locate(program_, "texture");
-  aspect_uniform_.Locate(program_, "aspect");
-  fov_uniform_.Locate(program_, "fov");
+  view_frustum_uniform_.Locate(program_, "view_frustum");
+
   log << util::kLogDateTime << " Program linked successfuly!\n";
+
+  set_view_frustum(core::Ortho::Calculate(0.0, 1920.0, 1680.0, 0.0, -1.0, 1.0));
+
+  glActiveTexture(GL_TEXTURE0);
+  texture_.Bind();
 }
 
 void SimpleShaderTest::Render() {
   program_.Use();
+  render::GLTexture::EnableBlending();
 
-  aspect_uniform_.Pass(aspect_ratio_);
-  fov_uniform_.Pass(static_cast<GLfloat>(fov_));
+  view_frustum_uniform_.Pass(view_frustum_);
 
-  glActiveTexture(GL_TEXTURE0);
-  texture_.Bind();
   texture_uniform_.Pass(static_cast<GLint>(0));
 
   vertex_buffer_.Bind();

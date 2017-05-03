@@ -7,11 +7,14 @@
       'target_name': 'shader_test',
       'type': 'executable',
       'dependencies': [
-        '../third-party/glew.gyp:glew',
+        '../third-party/libpng.gyp:libpng',
         '../library/library.gyp:library'
       ],
       'include_dirs': [
         'library'
+      ],
+      'sources': [
+        'test-gl-sprite-shader.cc'
       ],
       'conditions': [
           ['OS=="win"', {
