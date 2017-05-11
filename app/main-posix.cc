@@ -9,7 +9,9 @@
 #include "test-gl-sprite-shader.h"
 #include "test-shader.h"
 
-#include "test-shader.h"
+#include "cef_app.h"
+#include "cef_client.h"
+#include "cef_render_handler.h"
 
 bool CheckResourceExistance() {
   // This is only for testing.
@@ -29,12 +31,28 @@ int main(int argc, char* argv[]) {
   core::WindowXlib window;
   core::TimeTicker ticker;
   app::TestGLSpriteShader test_shader;
+
+  CefMainArgs cef_args(argc, argv);
+  CefSettings cef_settings;
+
   // app::SimpleShaderTest simple_shader_test;
 
   char fps_string[16];
 
   if (!CheckResourceExistance()) {
     return 0;
+  }
+
+  // Init CEF
+  // cef_settings.multi_threaded_message_loop = 0;
+  // cef_settings.single_process = 1;
+  // CefString(&cef_settings.resources_dir_path)
+  //     .FromASCII("third-party/cef-linux/Resources/");
+
+  if (!CefInitialize(cef_args, cef_settings, nullptr, nullptr)) {
+    util::HasLog log;
+    log.log << util::kLogDateTime << ": Unable to intialize CEF! Quiting.\n"; 
+    return 0; 
   }
 
   if (!window.Init("test_shader")) {
@@ -44,15 +62,7 @@ int main(int argc, char* argv[]) {
   window.Show();
   glViewport(0, 0, window.width(), window.height());
 
-  //
   test_shader.Init();
-  // simple_shader_test.ReadResources("resources/simple-vertex.vs",
-  //                                 "resources/simple-fragment.vs",
-  //                                  "resources/actor.png");
-  // simple_shader_test.InitBuffersAndTextures();
-  // simple_shader_test.InitShaders();
-  // simple_shader_test.InitProgram();
-  //
 
   while (window.is_init()) {
     ticker.Update();
@@ -62,6 +72,7 @@ int main(int argc, char* argv[]) {
       glViewport(0, 0, window.width(), window.height());
     }
     if (event == core::kDestroyNotify && event == core::kWindowDelete) {
+      CefShutdown();
       test_shader.Destroy();
       // simple_shader_test.Destroy();
       window.Destroy();
@@ -69,7 +80,8 @@ int main(int argc, char* argv[]) {
     }
 
     if (window.AsyncIsKeyPressed(XK_Escape)) {
-      test_shader.Destroy(); 
+      CefShutdown();
+      test_shader.Destroy();
       window.Destroy();
       return 0;
     }
@@ -77,7 +89,7 @@ int main(int argc, char* argv[]) {
     // if (window.AsyncIsKeyPressed(VK_F8)) {
     //   window.Fullscreen(!window.is_fullscreen());
     // }
-    
+
     if (window.AsyncIsKeyPressed(XK_W)) {
       test_shader.get_actor()->position().Add(core::Vector4f(0, 1, 0, 0));
     }
@@ -93,6 +105,19 @@ int main(int argc, char* argv[]) {
     if (window.AsyncIsKeyPressed(XK_D)) {
       test_shader.get_actor()->position().Add(core::Vector4f(1, 0, 0, 0));
     }
+
+    if (window.AsyncIsKeyPressed(XK_Q)) {
+      test_shader.get_background()->position().Add(core::Vector4f(0, 0, 10, 0));
+    }
+
+    if (window.AsyncIsKeyPressed(XK_E)) {
+      test_shader.get_background()->position().Add(
+          core::Vector4f(0, 0, -10, 0));
+    }
+
+    if (window.AsyncIsKeyPressed(XK_R)) {
+    }
+
 
     // if (event == core::kMouseWheel) {
     //   if (window.mouse_wheel_distance() < 0) {
