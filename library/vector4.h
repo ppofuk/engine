@@ -7,6 +7,8 @@
 #include "vector2.h"
 #include "vector3.h"
 
+#include "glm/glm.hpp"
+
 namespace core {
 
 template <typename T>
@@ -15,6 +17,8 @@ class Vector4 {
   Vector4() {}
   Vector4(T x, T y, T z, T w) : x_(x), y_(y), z_(z), w_(w) {}
   Vector4(T* ptr) : x_(ptr[0]), y_(ptr[1]), z_(ptr[2]), w_(ptr[3]) {}
+  Vector4(const glm::vec4& vector) : x_(vector.x), y_(vector.y), z_(vector.z),
+                                     w_(vector.w) {}
 
   explicit Vector4(const Vector2<T>& other)
       : x_(other.x()), y_(other.y()), z_(0), w_(0) {}

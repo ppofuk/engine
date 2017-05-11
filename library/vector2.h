@@ -8,6 +8,8 @@
 #include "memory-pool.h"
 #include "logger.h"
 
+#include "glm/glm.hpp"
+
 namespace core {
 
 template <typename T>
@@ -16,6 +18,7 @@ class Vector2 {
   Vector2() {}
   Vector2(T x, T y) : x_(x), y_(y) {}
   Vector2(T* ptr) : x_(ptr[0]), y_(ptr[1]) {}
+  Vector2(const glm::vec2& vector) : x_(vector.x), y_(vector.y) {}
 
   // Returns true if all components are 0.
   bool IsZero() const { return x() == y() == 0; }

@@ -5,3 +5,10 @@
 [submodule "ninja"]
  path = tools/ninja
  url = https://github.com/martine/ninja.git
+
+[submodule "glm"]
+ path = third-party/glm
+ url = https://github.com/g-truc/glm.git
+[submodule "third-party/glm"]
+	path = third-party/glm
+	url = https://github.com/g-truc/glm.git

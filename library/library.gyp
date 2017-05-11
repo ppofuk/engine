@@ -12,6 +12,7 @@
       ],
       'include_dirs': [
         '.',
+        '../third-party/glm/'
       ],
       'dependencies': [
         '../third-party/glew.gyp:glew'
@@ -61,7 +62,7 @@
         'render/gl-sprite-shader.cc'
       ],
       'direct_dependent_settings': {
-        'include_dirs': ['.'],
+        'include_dirs': ['.', '../third-party/glm/'],
         'conditions': [
           ['OS=="win"', {
             'defines': [

@@ -18,6 +18,13 @@ class Matrix4 {
     rows_[3] = w;
   }
 
+  Matrix4(const glm::mat4& matrix) {
+    rows_[0] = matrix[0];
+    rows_[1] = matrix[1];
+    rows_[2] = matrix[2];
+    rows_[3] = matrix[3]; 
+  }
+
   T* operator[](size_t i) { return rows_[i].type_array(); }
   const T* type_array() const { return rows_[0].type_array(); }
 
