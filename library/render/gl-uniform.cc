@@ -50,4 +50,10 @@ void GLUniform::Pass(const core::Matrix4f& values, bool transpose) {
       location_, 1, transpose, values.type_array());
 }
 
+void GLUniform::Pass(const glm::mat4x4& values, bool transpose) {
+  glUniformMatrix4fv(
+      location_, 1, transpose, &values[0][0]);
+}
+
+
 }  // namespace render
