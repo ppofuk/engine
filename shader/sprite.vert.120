@@ -1,7 +1,7 @@
-#version 330
+#version 120
 
-in vec4 coords;
-in vec2 texcoords;
+attribute vec4 coords;
+attribute vec2 texcoords;
 
 uniform mat4 projection;
 uniform mat4 view;
@@ -15,7 +15,7 @@ uniform float rz;
 uniform float width;
 uniform float height;
 
-out vec2 texcoord;
+varying vec2 texcoord;
 
 mat4 Scale(float x, float y, float z) {
   return mat4(vec4(x, 0.0, 0.0, 0.0),
@@ -47,8 +47,8 @@ mat4 RotateOnZ(float theta) {
 
 void main() {
   gl_Position = projection * view * Translate(x, y, z) *
-    RotateOnX(radians(rx + 180)) * RotateOnZ(radians(rz)) *
-    Scale(width, height, 0) * coords;
-  
+                RotateOnX(radians(rx + 180)) * RotateOnZ(radians(rz)) *
+                Scale(width, height, 0) * coords;
+
   texcoord = texcoords;
 }
