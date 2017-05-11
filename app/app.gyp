@@ -8,7 +8,8 @@
       'type': 'executable',
       'dependencies': [
         '../third-party/libpng.gyp:libpng',
-        '../library/library.gyp:library'
+        '../library/library.gyp:library',
+        '../library/cef/cef.gyp:cef'
       ],
       'include_dirs': [
         'library'
@@ -53,6 +54,8 @@
               '-std=c++11'
             ],
             'ldflags': [
+              '-Wl,-rpath=\$$ORIGIN'
+              
             ]
           }] # condition OS=linux
       ] # conditions
