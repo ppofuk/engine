@@ -31,7 +31,22 @@
             'Release': {
 		'defines': [
 		    'NDEBUG'
-		]
+		],
+                'conditions': [
+                    ['OS=="win"', {
+                        'cflags': [
+                            '/ZI'
+                        ],
+                        'ldflags': [
+                            '/debug'
+                        ]
+                    }],
+                    ['OS=="linux"', {
+                        'cflags': [
+                            '-O3'
+                        ]
+                    }]
+                ]
             }
 	}
     }
