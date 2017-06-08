@@ -59,7 +59,9 @@
         'render/gl-shader.h',
         'render/gl-shader.cc',
         'render/gl-sprite-shader.h',
-        'render/gl-sprite-shader.cc'
+        'render/gl-sprite-shader.cc',
+        'render/gl-pbo-texture-2d.h',
+        'render/gl-pbo-texture-2d.cc'
       ],
       'direct_dependent_settings': {
         'include_dirs': ['.', '../third-party/glm/'],
@@ -90,7 +92,7 @@
           }],
           ['OS=="linux"', {
             'cflags': [
-              '-std=c++11' # optional?
+              '-std=c++14' # optional?
             ],
             'ldflags': [
               '-lX11',
