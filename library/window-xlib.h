@@ -22,6 +22,8 @@ enum WindowEventType {
   kDestroyNotify,
   kKeyPress,
   kWindowDelete,
+  kMouseButtonPressed,
+  kMouseButtonReleased,
   kNone
 };
 
@@ -75,6 +77,8 @@ class WindowXlib : public util::HasLog {
   f32 height() { return glx_window_attributes_.height; }
   f32 cursor_x() { return win_x_; }
   f32 cursor_y() { return win_y_; }
+  Window get_window() { return window_; }
+  unsigned int get_mask() { return mask_; }
 
  private:
   Display* display_;

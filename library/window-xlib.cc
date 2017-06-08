@@ -32,21 +32,14 @@ bool WindowXlib::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
       XCreateColormap(display_, root_window_, visual_info_->visual, AllocNone);
 
   set_window_attributes_.colormap = color_map_;
-  set_window_attributes_.event_mask =
-      ExposureMask | KeyPressMask | PointerMotionMask;
+  set_window_attributes_.event_mask = ExposureMask | KeyPressMask |
+                                      PointerMotionMask | ButtonReleaseMask |
+                                      ButtonPressMask;
 
-  window_ = XCreateWindow(display_,
-                          root_window_,
-                          x,
-                          y,
-                          width,
-                          height,
-                          0,
-                          visual_info_->depth,
-                          InputOutput,
-                          visual_info_->visual,
-                          CWColormap | CWEventMask,
-                          &set_window_attributes_);
+  window_ =
+      XCreateWindow(display_, root_window_, x, y, width, height, 0,
+                    visual_info_->depth, InputOutput, visual_info_->visual,
+                    CWColormap | CWEventMask, &set_window_attributes_);
   XMapWindow(display_, window_);
   XStoreName(display_, window_, title);
 
@@ -72,12 +65,15 @@ bool WindowXlib::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
   char* gl_vendor = (char*)glGetString(GL_VENDOR);
   char* gl_renderer = (char*)glGetString(GL_RENDERER);
   log << util::kLogDateTime << ": "
-      << "GL Context created\n" << util::kLogDateTime << ": "
-      << "GL version: " << gl_version << "\n" << util::kLogDateTime << ": "
-      << "GL vendor: " << gl_vendor << "\n" << util::kLogDateTime << ": "
+      << "GL Context created\n"
+      << util::kLogDateTime << ": "
+      << "GL version: " << gl_version << "\n"
+      << util::kLogDateTime << ": "
+      << "GL vendor: " << gl_vendor << "\n"
+      << util::kLogDateTime << ": "
       << "GL renderer: " << gl_renderer << "\n";
 
-  return true; 
+  return true;
 }
 
 void WindowXlib::Destroy() {
@@ -95,7 +91,7 @@ void WindowXlib::Show(int show_param) {
 }
 
 void WindowXlib::Hide() {
-  XUnmapWindow(display_, window_); 
+  XUnmapWindow(display_, window_);
 }
 
 void WindowXlib::Title(const char* title) {
@@ -112,32 +108,34 @@ WindowEventType WindowXlib::CheckForEvents() {
     return kDestroyNotify;
   } else if (XCheckTypedEvent(display_, ClientMessage, &x_event_)) {
     return kWindowDelete;
+  } else if (XCheckTypedEvent(display_, ButtonPress, &x_event_)) {
+    // Mouse button was pressed
+    return kMouseButtonPressed;
+    
+  } else if (XCheckTypedEvent(display_, ButtonRelease, &x_event_)) {
+    // Mouse button was released
+    return kMouseButtonReleased;
   }
   return kNone;
 }
 
 void WindowXlib::Prerender() {}
 
-void WindowXlib::Postrender() { glXSwapBuffers(display_, window_); }
+void WindowXlib::Postrender() {
+  glXSwapBuffers(display_, window_);
+}
 
 void WindowXlib::UpdateCursorPosition() {
-  XQueryPointer(display_,
-                window_,
-                &pointer_root_,
-                &pointer_child_,
-                &root_x_,
-                &root_y_,
-                &win_x_,
-                &win_y_,
-                &mask_);
+  XQueryPointer(display_, window_, &pointer_root_, &pointer_child_, &root_x_,
+                &root_y_, &win_x_, &win_y_, &mask_);
 }
 
 short WindowXlib::AsyncIsKeyPressed(KeySym virtual_key) {
   char key_status[32];
   int keycode = XKeysymToKeycode(display_, virtual_key);
-  
+
   XQueryKeymap(display_, key_status);
-  return key_status[keycode / 8] & (1 << (keycode % 8)); 
+  return key_status[keycode / 8] & (1 << (keycode % 8));
 }
 
 }  // namespace core
