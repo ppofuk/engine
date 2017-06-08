@@ -90,6 +90,34 @@ class PooledObject {
   }
 };
 
+template <size_t chunk_size,
+          typename StaticPoolType = MemoryPoolHolder<chunk_size> >
+void* Malloc() {
+  if (StaticPoolType::is_null()) {
+    StaticPoolType::AllocateChunkRegionUnsafe();
+  }
+  
+  intern::PoolChunk<chunk_size>* chunk = StaticPoolType::head();
+  if (chunk == 0) {
+    return NULL;
+  }
+  
+  StaticPoolType::set_head(chunk->next);
+  return (void*)(chunk->memory);
+}
+
+template <size_t chunk_size,
+          typename StaticPoolType = MemoryPoolHolder<chunk_size> >
+void Free(void* ptr) {
+  intern::PoolChunk<chunk_size>* chunk =
+      reinterpret_cast<intern::PoolChunk<chunk_size>*>(
+          (char*)ptr - sizeof(intern::PoolChunk<chunk_size>*));
+  StaticPoolType::append(chunk);
+}
+ 
+
+
+
 }  // namespace core
 
 #endif  // ifndef OBSIDIAN_MEMORY_POOL_H_
