@@ -12,7 +12,7 @@
                 'USE_CEF'
             ],
             'include_dirs': [
-                '.',
+                '..',
                 '../../third-party/cef-linux/include/',
                 '../../third-party/cef-linux/'
             ],
@@ -21,12 +21,12 @@
                 '../../third-party/cef.gyp:cef_wrapper'
             ],
             'sources': [
-                'cef.h',
-                'cef.cc'
+                'cef-render-handler.cc',
+                'cef-ui-shader.cc'
             ],
             'direct_dependent_settings': {
                 'include_dirs': [
-                    '.',
+                    '..',
                     '../../third-party/cef-linux/include/',
                     '../../third-party/cef-linux'
                 ],
@@ -57,7 +57,7 @@
                     }],
                     ['OS=="linux"', {
                         'cflags': [
-                            '-std=c++11' # optional?
+                            '-std=c++14' # optional?
                         ],
                         'libraries': [
                             '-lX11',
