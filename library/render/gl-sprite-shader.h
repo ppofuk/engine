@@ -12,6 +12,7 @@
 #include "gl-attribute.h"
 
 #include "sprite.h"
+#include "glm/glm.hpp"
 
 #include "../static-compile-options.h"
 
@@ -52,6 +53,9 @@ class GLSpriteShader : public GLShader {
   // Sprite texcoord vector is ignored.
   // rect is a rectangle bounded inside (0, 0, texture width, texture height).
   void Draw(const Sprite<GLTexture>& sprite, core::Vector4f rect);
+
+  
+  void Draw(const GLTexture& texture, f32 width, f32 height, glm::vec3 position = glm::vec3(0, 0, 0), glm::vec4 texcoords = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f), f32 opacity = 1.0f, glm::vec3 rotation = glm::vec3(0, 0, 0));
 
   u8 get_active_texture() const { return active_texture_; }
   void set_active_texture(u8 active_texture) {

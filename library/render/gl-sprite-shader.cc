@@ -148,4 +148,43 @@ void GLSpriteShader::Render(const Sprite<GLTexture>& sprite) {
   DisableAttributes();
 }
 
+void GLSpriteShader::Draw(const GLTexture& texture,
+                          f32 width,
+                          f32 height,
+                          glm::vec3 position,
+                          glm::vec4 texcoords,
+                          f32 opacity,
+                          glm::vec3 rotation) {
+
+  MapTexcoordBuffer(texcoords);
+  
+  glEnable(GL_DEPTH_TEST);
+  program_.Use();
+
+  PassProjectionViewUnifroms();
+  PassDimensionUniforms(position.x,
+                        position.y,
+                        position.z,
+                        rotation.x,
+                        rotation.y,
+                        rotation.z,
+                        width,
+                        height,
+                        opacity);
+
+  // TODO: smarter texture binding
+  GLTexture::EnableBlending();
+
+  texture.Bind(active_texture_);  // This bind should change.
+  PassActiveTexture(active_texture_);
+
+  PassAndEnableAttributes();
+
+  indices_buffer_.Bind();
+  glDrawElements(GL_TRIANGLE_STRIP, 4, GL_UNSIGNED_SHORT, (void*)0);
+
+  DisableAttributes();
+}
+
+
 }  // namespace render
