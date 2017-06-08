@@ -20,9 +20,37 @@ void GLBufferBase::Destroy() {
 
 void GLBufferBase::Create(GLenum type) {
   Destroy();
+
+  // For Debugging
+  
+  while(glGetError() != GL_NO_ERROR);
+  
   glGenBuffers(1, &buffer_);
+  GLenum err = glGetError();
+  if (err != GL_NO_ERROR) {
+    util::Log << util::kLogDateTime << ": " << __FILE__ << ":" <<  __LINE__
+              << ": " << (const char* )gluErrorString(err) << "\n";
+  }
+  
   glBindBuffer(type, buffer_);
-  glBufferData(type, size_, data_, usage_);
+  err = glGetError();
+  if (err != GL_NO_ERROR) {
+    util::Log << util::kLogDateTime << ": " << __FILE__ << ":" <<  __LINE__
+              << ": " << (const char* )gluErrorString(err) << "\n";
+  }
+
+  if (type == GL_PIXEL_UNPACK_BUFFER) {
+    glGetError(); 
+  }
+
+  glNamedBufferDataEXT(buffer_, size_, data_, usage_); 
+  // glBufferData(type, size_, data_, usage_);
+  err = glGetError();
+  if (err != GL_NO_ERROR) {
+    util::Log << util::kLogDateTime << ": " << __FILE__ << ":" <<  __LINE__
+              << ": " << (const char* )gluErrorString(err) << "\n";
+  }
+  
   type_ = type;
 }
 
@@ -39,7 +67,14 @@ void GLBufferBase::Bind() const {
 
 void* GLBufferBase::Map(GLenum access) const {
   Bind();
-  return glMapBuffer(type_, access);
+  
+  void* ptr = glMapBuffer(type_, access);
+  if (ptr == nullptr) {
+    util::Log << util::kLogDateTime << ": " << __FILE__ << ":" <<  __LINE__
+              << ": " << (const char* )gluErrorString(glGetError()) << "\n";
+  }
+
+  return ptr; 
 }
 
 bool GLBufferBase::Unmap() const {
