@@ -5,6 +5,7 @@
 #define OBSIDIAN_GL_BUFFER_H_
 
 #include "GL/glew.h"
+#include "logger.h"
 #include <string.h>
 
 namespace render {
@@ -48,6 +49,8 @@ class GLBufferBase {
     return (buffer_ == rhs.get_buffer());
   }
 
+  inline void buffer_data() { glBufferData(type_, size_, data_, usage_); }
+  
   static void UnbindAll();
 
  private:
@@ -83,6 +86,10 @@ class GLBuffer<void> {
     return (buffer_base_ == buffer.buffer_base());
   }
 
+  inline void* Map(GLenum access) {
+    buffer_base_.buffer_data(); 
+    return buffer_base_.Map(access);
+  }
   inline bool Unmap() const { return buffer_base_.Unmap(); }
 
   // Returns the actual size of pointed array in bytes.
