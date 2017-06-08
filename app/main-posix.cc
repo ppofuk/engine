@@ -13,6 +13,11 @@
 #include "cef_client.h"
 #include "cef_render_handler.h"
 
+#include "cef/cef-render-handler.h"
+#include <string>
+
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
+
 bool CheckResourceExistance() {
   // This is only for testing.
   util::HasLog has_log;
@@ -27,10 +32,61 @@ bool CheckResourceExistance() {
   return true;
 }
 
+class BrowserClient : public CefClient {
+ public:
+  BrowserClient(render::cef::RenderHandler* render_handler)
+      : render_handler_(render_handler){};
+
+  virtual CefRefPtr<CefRenderHandler> GetRenderHandler() OVERRIDE {
+    return render_handler_;
+  }
+
+ private:
+  CefRefPtr<CefRenderHandler> render_handler_;
+  IMPLEMENT_REFCOUNTING(BrowserClient);
+};
+
+void OpenGLDebug(GLenum source,
+                 GLenum type,
+                 GLuint id,
+                 GLenum severity,
+                 GLsizei length,
+                 const GLchar* message,
+                 const void* userParam) {
+  static const char* sources[] = {
+      "API", "Window System", "Shader Compiler", "3rd party",
+      "App", "Other",         "Uknown"};
+  const char* source_human = sources[MIN(
+      source - GL_DEBUG_SOURCE_API, sizeof(sources) / sizeof(const char*))];
+
+  static const char* types[] = {"Error",       "Deprecated",  "Undefined",
+                                "Portability", "Performance", "Other",
+                                "Uknown"};
+  const char* type_human = types[MIN(type - GL_DEBUG_SOURCE_API,
+                                     sizeof(types) / sizeof(const char*))];
+
+  static const char* severities[] = {"High", "Medium", "Low", "Uknown"};
+  const char* severity_human =
+      severities[MIN(severity - GL_DEBUG_SOURCE_API,
+                     sizeof(severities) / sizeof(const char*))];
+  util::Log << util::kLogDateTime
+            << ": glDebugMessage [Source: " << source_human
+            << ", Type: " << type_human << ", Severity: " << severity_human
+            << "]: " << message << "\n";
+}
+
+
 int main(int argc, char* argv[]) {
   core::WindowXlib window;
   core::TimeTicker ticker;
   app::TestGLSpriteShader test_shader;
+  render::cef::RenderHandler render_handler;
+
+  core::Matrix4f perspective =
+      core::Perspective::Calculate(45, 4.0f / 3, 0.1, 10000);
+
+  core::Matrix4f ortho =
+      core::Ortho::Calculate(0.0, 1920.0, -1680.0, 0.0, -100000, 100000);
 
   CefMainArgs cef_args(argc, argv);
   CefSettings cef_settings;
@@ -48,21 +104,49 @@ int main(int argc, char* argv[]) {
   // cef_settings.single_process = 1;
   // CefString(&cef_settings.resources_dir_path)
   //     .FromASCII("third-party/cef-linux/Resources/");
+  // cef_settings.single_process = true;
+  
 
   if (!CefInitialize(cef_args, cef_settings, nullptr, nullptr)) {
     util::HasLog log;
-    log.log << util::kLogDateTime << ": Unable to intialize CEF! Quiting.\n"; 
-    return 0; 
+    log.log << util::kLogDateTime << ": Unable to intialize CEF! Quiting.\n";
+    return 0;
   }
 
   if (!window.Init("test_shader")) {
     return 0;
   }
 
+#ifndef NDEBUG
+  util::Log << util::kLogDateTime
+            << ": Enabling OpenGL debug message control.\n";
+  glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+  glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL,
+                        GL_TRUE);
+  glDebugMessageCallback((GLDEBUGPROC)OpenGLDebug, nullptr);
+#endif  // NDEBUG
+
   window.Show();
   glViewport(0, 0, window.width(), window.height());
 
   test_shader.Init();
+  render_handler.Init(&window);
+
+  // Create browser-window
+  CefRefPtr<CefBrowser> browser;
+  CefRefPtr<BrowserClient> browser_client;
+  CefWindowInfo window_info;
+  CefBrowserSettings browser_settings;
+
+  std::string path = realpath("resources/main.html", nullptr);
+  path = "file://" + path; 
+
+  window_info.SetAsWindowless(window.get_window(), true);
+  browser_client = new BrowserClient(&render_handler);
+  browser = CefBrowserHost::CreateBrowserSync(window_info, browser_client.get(),
+                                              "http://www.google.com",
+                                              browser_settings, nullptr);
+
 
   while (window.is_init()) {
     ticker.Update();
@@ -70,6 +154,15 @@ int main(int argc, char* argv[]) {
 
     if (event == core::kExpose) {
       glViewport(0, 0, window.width(), window.height());
+
+      perspective = core::Perspective::Calculate(
+          45, (f32)window.width() / window.height(), 0.1, 10000);
+
+      ortho = core::Ortho::Calculate(0.0, window.width(), -window.height(), 0.0,
+                                     -1, 1);
+
+      browser.get()->GetHost()->WasResized();
+      browser->GetHost()->SendFocusEvent(true);
     }
     if (event == core::kDestroyNotify && event == core::kWindowDelete) {
       CefShutdown();
@@ -77,6 +170,24 @@ int main(int argc, char* argv[]) {
       // simple_shader_test.Destroy();
       window.Destroy();
       return 0;
+    }
+
+    if (event == core::kMouseButtonPressed) {
+      util::Log << util::kLogDateTime << ": kMouseButtonPressed.\n"; 
+      CefMouseEvent event;
+      window.UpdateCursorPosition();
+      event.x = window.cursor_x();
+      event.y = window.cursor_y(); 
+      browser->GetHost()->SendMouseClickEvent(event, MBT_LEFT, false, 1);
+    }
+
+    if (event == core::kMouseButtonReleased) {
+      util::Log << util::kLogDateTime << ": kMouseButtonReleased.\n"; 
+      CefMouseEvent event;
+      window.UpdateCursorPosition();
+      event.x = window.cursor_x();
+      event.y = window.cursor_y(); 
+      browser->GetHost()->SendMouseClickEvent(event, MBT_LEFT, true, 1);
     }
 
     if (window.AsyncIsKeyPressed(XK_Escape)) {
@@ -119,26 +230,40 @@ int main(int argc, char* argv[]) {
     }
 
 
-    // if (event == core::kMouseWheel) {
-    //   if (window.mouse_wheel_distance() < 0) {
-    //     test_shader.get_background()->position().Add(
-    //         core::Vector4f(0, 0, 1000, 0));
-    //   } else {
-    //     test_shader.get_background()->position().Add(
-    //         core::Vector4f(0, 0, -1000, 0));
-    //   }
-    // }
-
     if (ticker.Tick(41666666)) {
       // 30hz tick
       test_shader.IncreaseFrame();
+      CefMouseEvent event;
+      window.UpdateCursorPosition(); 
+      event.x = window.cursor_x();
+      event.y = window.cursor_y();
+      
+      browser->GetHost()->SendMouseMoveEvent(event, false);
+      
+      
+      CefDoMessageLoopWork();
     }
+
+    render::GLSpriteShader* sprite_shader = test_shader.get_sprite_shader();
 
     window.Prerender();
 
+    glClearColor(0.173, 0.251, 0.349, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    sprite_shader->set_projection(perspective);
+
     test_shader.Render();
     // simple_shader_test.Render();
+
+    glDisable(GL_DEPTH_TEST);
+    sprite_shader->set_projection(ortho);
+    sprite_shader->Draw(*render_handler.get_texture(), window.width() / 2,
+                        window.height() / 2,
+                        glm::vec3(window.width() / 2, -window.height() / 2, 0));
+    glEnable(GL_DEPTH_TEST);
+
+    // render_handler.shader()->Render();
+
     window.Postrender();
 
     // We haven't implemented fonts yet, so fps is drawn as window title.

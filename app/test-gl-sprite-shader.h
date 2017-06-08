@@ -8,6 +8,12 @@
 #include "render/gl-sprite-shader.h"
 #include "render/gl-texture-2d.h"
 #include "render/texture.h"
+#include "render/empty-texture-loader.h"
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
+#include "render/gl-pbo-texture-2d.h"
 
 namespace app {
 
@@ -22,11 +28,22 @@ class TestGLSpriteShader {
   render::Sprite<render::GLTexture>* get_actor() { return &actor_; }
   render::Sprite<render::GLTexture>* get_background() { return &background_; }
 
+
+  glm::vec3 camera_pos;
+  glm::vec3 camera_target;
+
+  render::GLSpriteShader* get_sprite_shader() { return &sprite_shader_; }
+
  private:
   render::DefaultGLTexture actor_texture_;
   render::DefaultGLTexture background_texture_;
+  render::GLPixelBufferObjectTexture pbo_texture_; 
+
+  
   render::Sprite<render::GLTexture> actor_;
   render::Sprite<render::GLTexture> background_;
+  
+
   render::GLSpriteShader sprite_shader_;
   u16 frame_ = 0;
   u16 column_count_ = 16;
