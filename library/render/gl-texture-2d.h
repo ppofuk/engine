@@ -31,8 +31,8 @@ class GLTexture {
   void set_gl_wrap_s(GLint gl_wrap_s) { gl_wrap_s_ = gl_wrap_s; }
   void set_gl_wrap_t(GLint gl_wrap_t) { gl_wrap_t_ = gl_wrap_t; }
 
-  inline f32 width() { return texture_abstract_->get_width(); }
-  inline f32 height() { return texture_abstract_->get_height(); }
+  virtual inline f32 width() { return texture_abstract_->get_width(); }
+  virtual inline f32 height() { return texture_abstract_->get_height(); }
 
   // Will apply min, mag, wrap_s and wrap_t filtering.
   void ApplyFilters();
@@ -46,20 +46,20 @@ class GLTexture {
 
   // Create a OpenGL texture object (referenced by gl_texture_) based on class
   // gl_* parameters.
-  void Generate();
+  virtual void Generate();
 
   // Normal glBindTexture.
-  void Bind() const;
+  virtual void Bind() const;
 
   // Uses glActiveTexture on index and binds the texture.
-  void Bind(size_t index) const;
+  virtual void Bind(size_t index) const;
 
   // Enable texture blendings.
   static void EnableBlending();
 
   u8 bound_to_active_texture_unite() const { return bound_to_active_tu_; }
 
- private:
+ protected:
   GLint gl_alpha_;
   GLuint gl_texture_;
   GLint gl_min_filter_;
@@ -68,6 +68,7 @@ class GLTexture {
   GLint gl_wrap_t_;
 
   u8 bound_to_active_tu_; // Note that 32 is invalid, aka. unsigned.
+ private:
   TextureLoaderAbstract* texture_abstract_;
 };
 
