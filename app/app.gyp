@@ -51,11 +51,10 @@
             ],
             'cflags': [
               '-Wall',
-              '-std=c++11'
+              '-std=c++14'
             ],
             'ldflags': [
               '-Wl,-rpath=\$$ORIGIN'
-              
             ]
           }] # condition OS=linux
       ] # conditions
@@ -103,7 +102,7 @@
             ],
             'cflags': [
               '-Wall',
-              '-std=c++11'
+              '-std=c++14'
             ],
             'ldflags': [
             ]
