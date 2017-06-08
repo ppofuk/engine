@@ -7,8 +7,7 @@
 namespace render {
 
 GLShaderObject::GLShaderObject()
-    : shader_source_(0), vaild_(false), type_(GL_VERTEX_ARRAY) {
-}
+    : shader_source_(0), vaild_(false), type_(GL_VERTEX_ARRAY) {}
 
 void GLShaderObject::Compile(GLenum type) {
   type_ = type;
@@ -35,7 +34,8 @@ void GLShaderObject::Compile(GLenum type) {
 
   GLenum err = glGetError();
   if (err != GL_NO_ERROR) {
-    log << util::kLogDateTime << ": " << (char*)gluErrorString(err) << "\n";
+    log << util::kLogDateTime << ": " << __FILE__ << ":" << __LINE__ << ": "
+        << (char*)gluErrorString(err) << "\n";
   }
 
   GLint ok;
