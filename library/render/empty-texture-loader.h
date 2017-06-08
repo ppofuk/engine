@@ -9,24 +9,21 @@
 
 namespace render {
 
-template <typename MemoryAllocator = core::MallocMemoryAllocator>
+// EmptyTextureLoader can be used as an TextureLoader to an extarnal
+// texture data. 
 class EmptyTextureLoader : public TextureLoaderAbstract {
  public:
   // This is just to satisfy the TextureLoaderAbstract.
   bool Load(const char* file_name) { return false; }
 
-  bool Load(size_t width, size_t height, bool has_alpha = true) {
-    if (texture_data_)
-      Destory();
-
+  // Emulate texture load, where |ptr| is texture data. 
+  bool Load(size_t width, size_t height, byte* ptr, bool has_alpha = true) {
     if (has_alpha)
       gl_alpha_ = 4;
     else
-      gl_alpha = 3;
+      gl_alpha_ = 3;
 
-    texture_data_ = MemoryAllocator::New(width * height * gl_alpha_);
-    if (!texture_data_)
-      return false;
+    texture_data_ = ptr;
 
     width_ = width;
     height_ = height;
@@ -36,12 +33,9 @@ class EmptyTextureLoader : public TextureLoaderAbstract {
   }
 
   void Destroy() {
-    MemoryAllocator::Delete(texture_data_);
-    width_ = height_ = 0;
+    
   }
 };
-
-typedef EmptyTextureLoader<> DefaultEmptyTextureLoader;
 
 }  // namespace resource
 
