@@ -34,7 +34,7 @@ bool WindowXlib::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
   set_window_attributes_.colormap = color_map_;
   set_window_attributes_.event_mask = ExposureMask | KeyPressMask |
                                       PointerMotionMask | ButtonReleaseMask |
-                                      ButtonPressMask;
+                                      ButtonPressMask | PointerMotionMask;
 
   window_ =
       XCreateWindow(display_, root_window_, x, y, width, height, 0,
@@ -49,7 +49,7 @@ bool WindowXlib::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
 
   glx_context_ = glXCreateContext(display_, visual_info_, NULL, GL_TRUE);
   glXMakeCurrent(display_, window_, glx_context_);
-
+  
   is_init_ = true;
 
   GLenum err = glewInit();
@@ -103,6 +103,11 @@ WindowEventType WindowXlib::CheckForEvents() {
     XGetWindowAttributes(display_, window_, &glx_window_attributes_);
     return kExpose;
   } else if (XCheckTypedEvent(display_, KeyPress, &x_event_)) {
+    last_keycode_ = x_event_.xkey.keycode;
+    last_keysym_ = XkbKeycodeToKeysym(display_, x_event_.xkey.keycode, 0,
+                                      x_event_.xkey.state & ShiftMask ? 1 : 0);
+    
+    
     return kKeyPress;
   } else if (XCheckTypedEvent(display_, DestroyNotify, &x_event_)) {
     return kDestroyNotify;
@@ -111,11 +116,15 @@ WindowEventType WindowXlib::CheckForEvents() {
   } else if (XCheckTypedEvent(display_, ButtonPress, &x_event_)) {
     // Mouse button was pressed
     return kMouseButtonPressed;
-    
+
   } else if (XCheckTypedEvent(display_, ButtonRelease, &x_event_)) {
     // Mouse button was released
     return kMouseButtonReleased;
+  } else if (XCheckTypedEvent(display_, MotionNotify, &x_event_)) {
+    // Mouse button was released
+    return kMotionNotify;
   }
+
   return kNone;
 }
 

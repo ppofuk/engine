@@ -9,6 +9,7 @@
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
+#include <X11/XKBlib.h>
 #include "GL/glew.h"
 #include <GL/glx.h>
 
@@ -24,6 +25,7 @@ enum WindowEventType {
   kWindowDelete,
   kMouseButtonPressed,
   kMouseButtonReleased,
+  kMotionNotify,
   kNone
 };
 
@@ -43,7 +45,7 @@ class WindowXlib : public util::HasLog {
   void Postrender();
 
   // Should be called before rendering.
-  void Prerender(); 
+  void Prerender();
 
   // Returns a pending event from internal event queue.
   WindowEventType CheckForEvents();
@@ -52,17 +54,17 @@ class WindowXlib : public util::HasLog {
   // |cursor_x| and |cursor_y|.
   void UpdateCursorPosition();
 
-  // Maps a window to screen. Note, that this is done in |Init|. 
-  // show_param is ignored (it's just for compatibility with win32 version). 
+  // Maps a window to screen. Note, that this is done in |Init|.
+  // show_param is ignored (it's just for compatibility with win32 version).
   void Show(int show_param = 0);
 
-  // Unmaps a window from screen. 
+  // Unmaps a window from screen.
   void Hide();
 
-  // Sets window title. In X it's called store name. 
+  // Sets window title. In X it's called store name.
   void Title(const char* title);
 
-  // 
+  //
   short AsyncIsKeyPressed(KeySym virtual_key);
 
   bool is_init() const { return is_init_; }
@@ -79,6 +81,12 @@ class WindowXlib : public util::HasLog {
   f32 cursor_y() { return win_y_; }
   Window get_window() { return window_; }
   unsigned int get_mask() { return mask_; }
+  KeySym get_last_keysym() { return last_keysym_; }
+  inline const char* get_last_key_str() {
+    return XKeysymToString(last_keysym_);
+  }
+  
+  unsigned int get_last_keycode() { return last_keycode_; }
 
  private:
   Display* display_;
@@ -97,6 +105,8 @@ class WindowXlib : public util::HasLog {
   i32 root_x_, root_y_, win_x_, win_y_;
   unsigned int mask_;
   Window pointer_root_, pointer_child_;
+  KeySym last_keysym_;
+  unsigned int last_keycode_;
 };
 
 }  // namespace core
