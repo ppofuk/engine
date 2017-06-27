@@ -4,6 +4,7 @@
 
 #include "GL/glew.h"
 #include "window-xlib.h"
+#include "window-xlib-utility.h"
 #include "reader-inl.h"
 #include "time-ticker.h"
 #include "test-gl-sprite-shader.h"
@@ -15,6 +16,9 @@
 
 #include "cef/cef-render-handler.h"
 #include <string>
+
+#include <clocale>
+#include <cstdlib>
 
 #define MIN(a, b) (((a) < (b)) ? (a) : (b))
 
@@ -105,7 +109,7 @@ int main(int argc, char* argv[]) {
   // CefString(&cef_settings.resources_dir_path)
   //     .FromASCII("third-party/cef-linux/Resources/");
   // cef_settings.single_process = true;
-  
+
 
   if (!CefInitialize(cef_args, cef_settings, nullptr, nullptr)) {
     util::HasLog log;
@@ -139,7 +143,7 @@ int main(int argc, char* argv[]) {
   CefBrowserSettings browser_settings;
 
   std::string path = realpath("resources/main.html", nullptr);
-  path = "file://" + path; 
+  path = "file://" + path;
 
   window_info.SetAsWindowless(window.get_window(), true);
   browser_client = new BrowserClient(&render_handler);
@@ -147,6 +151,7 @@ int main(int argc, char* argv[]) {
                                               "http://www.google.com",
                                               browser_settings, nullptr);
 
+  CefMouseEvent mouse_event;
 
   while (window.is_init()) {
     ticker.Update();
@@ -173,24 +178,59 @@ int main(int argc, char* argv[]) {
     }
 
     if (event == core::kMouseButtonPressed) {
-      util::Log << util::kLogDateTime << ": kMouseButtonPressed.\n"; 
       CefMouseEvent event;
       window.UpdateCursorPosition();
       event.x = window.cursor_x();
-      event.y = window.cursor_y(); 
+      event.y = window.cursor_y();
       browser->GetHost()->SendMouseClickEvent(event, MBT_LEFT, false, 1);
     }
 
     if (event == core::kMouseButtonReleased) {
-      util::Log << util::kLogDateTime << ": kMouseButtonReleased.\n"; 
       CefMouseEvent event;
       window.UpdateCursorPosition();
       event.x = window.cursor_x();
-      event.y = window.cursor_y(); 
+      event.y = window.cursor_y();
       browser->GetHost()->SendMouseClickEvent(event, MBT_LEFT, true, 1);
     }
 
+    if (event == core::kMotionNotify) {
+      window.UpdateCursorPosition();
+      mouse_event.x = window.cursor_x();
+      mouse_event.y = window.cursor_y();
+
+      browser->GetHost()->SendMouseMoveEvent(mouse_event, false);
+    }
+
+    if (event == core::kKeyPress) {
+      CefKeyEvent key_event;
+      const char* keycode_str = window.get_last_key_str();
+      util::Log
+          << util::kLogDateTime
+          << ": kKeyPress (main-posix): "
+          << keycode_str
+          << "\n";
+
+      if (window.get_last_keysym() == XK_space) {
+        printf("space\n"); 
+      }
+
+      if (strlen(keycode_str) < 2) {
+        wchar_t key_char[2];
+        std::mbstowcs(key_char, keycode_str, 2);
+        key_event.type = KEYEVENT_CHAR;
+        key_event.character = key_char[0];
+
+      } else {
+        key_event.type = KEYEVENT_KEYDOWN;
+      }
+
+      key_event.windows_key_code =
+          core::xlib::ConvertToKeyboardCode(window.get_last_keysym());
+      browser->GetHost()->SendKeyEvent(key_event);
+    }
+
     if (window.AsyncIsKeyPressed(XK_Escape)) {
+      browser->GetHost()->CloseBrowser(false); 
       CefShutdown();
       test_shader.Destroy();
       window.Destroy();
@@ -201,48 +241,41 @@ int main(int argc, char* argv[]) {
     //   window.Fullscreen(!window.is_fullscreen());
     // }
 
-    if (window.AsyncIsKeyPressed(XK_W)) {
-      test_shader.get_actor()->position().Add(core::Vector4f(0, 1, 0, 0));
-    }
+    // if (window.AsyncIsKeyPressed(XK_W)) {
+    //   test_shader.get_actor()->position().Add(core::Vector4f(0, 1, 0, 0));
+    // }
 
-    if (window.AsyncIsKeyPressed(XK_S)) {
-      test_shader.get_actor()->position().Add(core::Vector4f(0, -1, 0, 0));
-    }
+    // if (window.AsyncIsKeyPressed(XK_S)) {
+    //   test_shader.get_actor()->position().Add(core::Vector4f(0, -1, 0, 0));
+    // }
 
-    if (window.AsyncIsKeyPressed(XK_A)) {
-      test_shader.get_actor()->position().Add(core::Vector4f(-1, 0, 0, 0));
-    }
+    // if (window.AsyncIsKeyPressed(XK_A)) {
+    //   test_shader.get_actor()->position().Add(core::Vector4f(-1, 0, 0, 0));
+    // }
 
-    if (window.AsyncIsKeyPressed(XK_D)) {
-      test_shader.get_actor()->position().Add(core::Vector4f(1, 0, 0, 0));
-    }
+    // if (window.AsyncIsKeyPressed(XK_D)) {
+    //   test_shader.get_actor()->position().Add(core::Vector4f(1, 0, 0, 0));
+    // }
 
-    if (window.AsyncIsKeyPressed(XK_Q)) {
-      test_shader.get_background()->position().Add(core::Vector4f(0, 0, 10, 0));
-    }
+    // if (window.AsyncIsKeyPressed(XK_Q)) {
+    //   test_shader.get_background()->position().Add(core::Vector4f(0, 0, 10, 0));
+    // }
 
-    if (window.AsyncIsKeyPressed(XK_E)) {
-      test_shader.get_background()->position().Add(
-          core::Vector4f(0, 0, -10, 0));
-    }
+    // if (window.AsyncIsKeyPressed(XK_E)) {
+    //   test_shader.get_background()->position().Add(
+    //       core::Vector4f(0, 0, -10, 0));
+    // }
 
-    if (window.AsyncIsKeyPressed(XK_R)) {
-    }
+    // if (window.AsyncIsKeyPressed(XK_R)) {
+    // }
 
 
     if (ticker.Tick(41666666)) {
       // 30hz tick
       test_shader.IncreaseFrame();
-      CefMouseEvent event;
-      window.UpdateCursorPosition(); 
-      event.x = window.cursor_x();
-      event.y = window.cursor_y();
-      
-      browser->GetHost()->SendMouseMoveEvent(event, false);
-      
-      
-      CefDoMessageLoopWork();
     }
+
+    CefDoMessageLoopWork();
 
     render::GLSpriteShader* sprite_shader = test_shader.get_sprite_shader();
 
