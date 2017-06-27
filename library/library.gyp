@@ -160,8 +160,10 @@
           ],
            'sources': [
               # Add sources here
-              'window-xlib.cc',
-              'window-xlib.h'
+               'window-xlib.cc',
+               'window-xlib.h',
+               'window-xlib-utility.h',
+               'window-xlib-utility.cc'
             ],
         }],
       ],
