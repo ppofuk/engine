@@ -16,9 +16,15 @@ if(WIN32)
   file(GLOB ent_app_test_platform_src "test/win32/*.cc")
 endif()
 
+if(NOT WIN32)
 add_executable(app_test
   ${ent_app_test_src}
   ${ent_app_test_platform_src})
+else()
+  add_executable(app_test WIN32
+  ${ent_app_test_src}
+  ${ent_app_test_platform_src})
+endif()
 
 target_include_directories(app_test PUBLIC "test/")
 

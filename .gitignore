@@ -53,4 +53,6 @@ log.txt
 tools/python27/
 
 third-party/cef-linux/
+third-party/cef-win32/
 compdb.sh
+.clang_complete

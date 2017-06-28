@@ -3,12 +3,11 @@
 // found in the LICENSE file.
 #include "GL/glew.h"
 
-#include "win32/window.h"
-#include "win32/wgl-context.h"
-#include "reader-inl.h"
-#include "time-ticker.h"
+#include "core/win32/window.h"
+#include "core/win32/wgl-context.h"
+#include "core/reader-inl.h"
+#include "core/time-ticker.h"
 #include "test-gl-sprite-shader.h"
-#include "test-shader.h"
 
 bool CheckResourceExistance() {
   // This is only for testing.
@@ -27,6 +26,7 @@ bool CheckResourceExistance() {
 INT WINAPI WinMain(HINSTANCE instance, HINSTANCE, LPSTR, int cmd_show_num) {
   core::Window window(instance);
   core::WGLContext context;
+  
   core::TimeTicker ticker;
   app::TestGLSpriteShader test_shader;
   // app::SimpleShaderTest simple_shader_test;

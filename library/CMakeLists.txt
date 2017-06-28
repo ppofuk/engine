@@ -63,8 +63,22 @@ if(LINUX)
   
 endif()
 
-# if(WIN32)
-#   list(REMOVE_ITEM CEF_COMPILER_FLAGS /WX)
-# endif()
+if(WIN32)
+  add_subdirectory("../third-party/cef-win32" "cef/")
+  target_include_directories(ent_cef PUBLIC "../third-party/cef-win32")
+  target_link_libraries(ent_cef PUBLIC libcef_dll_wrapper)
+  if (CMAKE_BUILD_TYPE EQUAL "DEBUG")
+    target_link_libraries(ent_cef
+      PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../third-party/cef-win32/Debug/libcef.lib")
+    # target_link_libraries(ent_cef
+    #   PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../third-party/cef-win32/Debug/libcef.dll")
+  else()
+    target_link_libraries(ent_cef
+      PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../third-party/cef-win32/Release/libcef.lib")
+    # target_link_libraries(ent_cef
+    #   PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../third-party/cef-win32/Release/libcef.dll")
+  endif()
+  
+endif()
 
 target_link_libraries(ent_cef PUBLIC ent_core)
