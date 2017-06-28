@@ -5,13 +5,13 @@
 #ifndef OBSIDIAN_CEF_RENDER_HANDLER_H_
 #define OBSIDIAN_CEF_RENDER_HANDLER_H_
 
-#include "cef_app.h"
-#include "cef_client.h"
-#include "cef_render_handler.h"
+#include "include/cef_app.h"
+#include "include/cef_client.h"
+#include "include/cef_render_handler.h"
 
 
 #if defined(OS_LINUX)
-#include "window-xlib.h"
+#include "linux/window-xlib.h"
 
 // Represents default window class on linux platform
 typedef core::WindowXlib WindowImpl;// TODO(ppofuk): test defined(OS_WINDOWS)

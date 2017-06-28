@@ -3,16 +3,12 @@
 // found in the LICENSE file.
 
 #include "GL/glew.h"
-#include "window-xlib.h"
-#include "window-xlib-utility.h"
-#include "reader-inl.h"
-#include "time-ticker.h"
+#include "core/linux/window-xlib.h"
+#include "core/linux/window-xlib-utility.h"
+#include "core/reader-inl.h"
+#include "core/time-ticker.h"
 #include "test-gl-sprite-shader.h"
-#include "test-shader.h"
-
-#include "cef_app.h"
-#include "cef_client.h"
-#include "cef_render_handler.h"
+// #include "test-shader.h"
 
 #include "cef/cef-render-handler.h"
 #include <string>

@@ -5,7 +5,7 @@
 #define OBSIDIAN_GL_BUFFER_H_
 
 #include "GL/glew.h"
-#include "logger.h"
+#include "../logger.h"
 #include <string.h>
 
 namespace render {

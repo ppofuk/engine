@@ -13,8 +13,8 @@
 #include "GL/glew.h"
 #include <GL/glx.h>
 
-#include "basic-types.h"
-#include "logger.h"
+#include "../basic-types.h"
+#include "../logger.h"
 
 namespace core {
 

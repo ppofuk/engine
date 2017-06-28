@@ -1,5 +1,5 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
-#include "cef/cef-render-handler.h"
+#include "cef-render-handler.h"
 
 namespace render {
 namespace cef {

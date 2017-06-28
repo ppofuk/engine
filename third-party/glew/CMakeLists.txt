@@ -1,0 +1,20 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 3.5.0)
+if(UNIX AND NOT APPLE)
+  set(LINUX TRUE)
+endif()
+
+PROJECT(glew)
+find_package(OpenGL REQUIRED)
+
+set(glew_src "src/glew.c")
+add_library(glew STATIC ${glew_src})
+target_link_libraries(glew PUBLIC ${OPENGL_LIBRARIES})
+target_include_directories(glew PUBLIC "include/")
+target_compile_definitions(glew PUBLIC "GLEW_STATIC")
+
+if(LINUX)
+  target_compile_definitions(glew PUBLIC "GL_GLEXT_PROTOTYPES")
+  find_package(X11 REQUIRED)
+  target_link_libraries(glew PUBLIC ${X11_LIBRARIES})
+  target_include_directories(glew PUBLIC ${X11_INCLUDE_DIR})
+endif()

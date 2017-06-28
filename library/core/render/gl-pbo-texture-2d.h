@@ -7,7 +7,7 @@
 
 #include "gl-texture-2d.h"
 #include "gl-buffer.h"
-#include "logger.h"
+#include "../logger.h"
 
 namespace render {
 

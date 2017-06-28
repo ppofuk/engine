@@ -4,7 +4,7 @@
 #ifndef OBSIDIAN_RENDER_GL_SHADER_H_
 #define OBSIDIAN_RENDER_GL_SHADER_H_
 
-#include "static-compile-options.h"
+#include "../static-compile-options.h"
 
 #include "gl-program.h"
 #include "gl-texture-2d.h"

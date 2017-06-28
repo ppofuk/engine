@@ -41,6 +41,7 @@ class Logger {
   template<typename Type> char* Address(Type& var) const {
     static char address[18];
     sprintf(address, "%p", (void*)var);
+    
     return address;
   }
 
