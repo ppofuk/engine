@@ -24,11 +24,8 @@ typedef core::Window WindowImpl;
 
 #endif // if defined(OS_LINUX)
 
-
 #include "cef-ui-shader.h"
 #include "logger.h"
-
-#include "stb_image_write.h"
 
 namespace render {
 namespace cef {
