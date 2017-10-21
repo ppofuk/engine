@@ -30,5 +30,4 @@ target_include_directories(app_test PUBLIC "test/")
 
 add_subdirectory("../library" "lib")
 target_link_libraries(app_test
-  ent_core
-  ent_cef)
+  ent_core)
