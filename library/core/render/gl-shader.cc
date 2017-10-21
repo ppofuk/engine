@@ -23,7 +23,8 @@ void GLShader::Destroy() {
   is_init_ = false;
 }
 
-void GLShader::AddShader(const char* path, ShaderType shader_type) {
+bool GLShader::AddShader(const char* path, ShaderType shader_type) {
+  bool success = true;
   static char shader_source[kGLShaderShaderSourceSize];
   static util::ByteReader reader;
   reader.set_data(shader_source);
@@ -44,10 +45,16 @@ void GLShader::AddShader(const char* path, ShaderType shader_type) {
     } else {
       util::Log << util::kLogDateTime << ": " << __FILE__ << ": " << __LINE__
                 << ": Shader compilation error in " << path << ": "
-                << "\n" << shader.InfoLog() << "\n";
+                << "\n"
+                << shader.InfoLog() << "\n";
+      success = false;
     }
+  } else {
+    success = false;
   }
+
   reader.Close();
+  return success;
 }
 
 void GLShader::Compile() {
@@ -55,11 +62,38 @@ void GLShader::Compile() {
   if (!program_.is_vaild()) {
     util::Log << util::kLogDateTime << ": " << __FILE__ << ": " << __LINE__
               << ": Program link error: "
-              << "\n" << program_.InfoLog() << "\n";
+              << "\n"
+              << program_.InfoLog() << "\n";
   }
   projection_uniform_.Locate(program_, "projection");
   view_uniform_.Locate(program_, "view");
+  model_uniform_.Locate(program_, "model");
+
   PostCompile();
+}
+
+void GLShader::ReallocateModelUnifrom(const char* location) {
+  model_uniform_.Locate(program_, location);
+}
+
+void GLShader::ReallocateModelUnifrom(GLint location) {
+  model_uniform_.set_location(location);
+}
+
+void GLShader::ReallocateViewUnifrom(const char* location) {
+  view_uniform_.Locate(program_, location);
+}
+
+void GLShader::ReallocateViewUnifrom(GLint location) {
+  view_uniform_.set_location(location);
+}
+
+void GLShader::ReallocateProjectionUnifrom(const char* location) {
+  projection_uniform_.Locate(program_, location);
+}
+
+void GLShader::ReallocateProjectionUnifrom(GLint location) {
+  projection_uniform_.set_location(location);
 }
 
 }  // namespace render
