@@ -7,9 +7,8 @@
 #include "../static-compile-options.h"
 
 #include "gl-program.h"
-#include "gl-texture-2d.h"
 #include "gl-uniform.h"
-#include "../matrix-utility.h"
+#include <glm/glm.hpp>
 
 namespace render {
 
@@ -17,32 +16,79 @@ class GLShader {
  public:
   enum ShaderType { kFragmentShader, kVertexShader };
 
+  // Initializes shader program for linkage and compilation. Also calls virtual
+  // method |OnInit|.
   void Init();
+
+  // Destroys all added shaders and destroys the shader program.
   void Destroy();
 
-  void AddShader(const char* path, ShaderType shader_type);
+  // Reads shader from file specified with |path|, compiles it and attaches it
+  // to program (contained in this class).
+  // |shader_type| is either kFragmentShader or kVertexShader.
+  // Returns true on success.
+  bool AddShader(const char* path, ShaderType shader_type);
 
+  // TODO(ppofuk): Rename this to link, because AddShader is shader compilation.
+  //               This is actually a link process.
+  // Links all compiled shaders to a program.
   void Compile();
 
+  // Overloadable method that is called on initialization, just after |Init|
+  // method.
   virtual void OnInit() {}
+
+  // Overloadable method that is called on |Destroy|. This method is called
+  // before program or any added shaders are deleted.
   virtual void OnDestroy() {}
+
+  // TODO(ppofuk): Rename this to PostLink. See TODO for |Compile|.
+  // Overloadble method that is called after linking all shaders in one program.
   virtual void PostCompile() {}
 
-  void set_projection(core::Matrix4f projection) {
-    projection_ = projection;
+  // Reallocate model uniform to different location.
+  // Location is found and set via |GLUniform.Locate| method.
+  void ReallocateModelUnifrom(const char* location);
+
+  // Reallocate model uniform to different location.
+  // Location is set via |GLUniform.set_location| method. It's a simple setter
+  // in GLUniform.
+  void ReallocateModelUnifrom(GLint location);
+
+  // Reallocate view uniform to different location.
+  // Location is found and set via |GLUniform.Locate| method.
+  void ReallocateViewUnifrom(const char* location);
+
+  // Reallocate view uniform to different location.
+  // Location is set via |GLUniform.set_location| method. It's a simple setter
+  // in GLUniform.
+  void ReallocateViewUnifrom(GLint location);
+
+  // Reallocate projection uniform to different location.
+  // Location is found and set via |GLUniform.Locate| method.
+  void ReallocateProjectionUnifrom(const char* location);
+
+  // Reallocate projection uniform to different location.
+  // Location is set via |GLUniform.set_location| method. It's a simple setter
+  // in GLUniform.
+  void ReallocateProjectionUnifrom(GLint location);
+
+  inline void model_uniform_pass(const glm::mat4& model) {
+    model_uniform_.Pass(model);
   }
 
-  void set_view(core::Matrix4f view) {
-    view_ = view;
+  inline void view_uniform_pass(const glm::mat4& view) {
+    view_uniform_.Pass(view);
   }
 
-  inline void PassProjectionViewUnifroms() {
-    projection_uniform_.Pass(projection_);
-    view_uniform_.Pass(view_);
-
+  inline void projection_uniform_pass(const glm::mat4& projection) {
+    projection_uniform_.Pass(projection);
   }
 
-  GLProgram& get_program() { return program_; }
+  size_t shader_count() const { return shader_count_; }
+
+  GLProgram* get_program_unsafe() { return &program_; }
+  const GLProgram& get_program() const { return program_; }
   bool is_init() const { return is_init_; }
 
  protected:
@@ -50,10 +96,10 @@ class GLShader {
   size_t shader_count_ = 0;
   GLuint shader_objects_[kGLShaderMaxNumberOfShaders];
   GLProgram program_;
-  core::Matrix4f projection_;
-  GLUniform projection_uniform_;
-  core::Matrix4f view_;
+
+  GLUniform model_uniform_;
   GLUniform view_uniform_;
+  GLUniform projection_uniform_;
 };
 
 }  // namespace render
