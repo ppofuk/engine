@@ -5,11 +5,12 @@
 #define OBSIDIAN_GL_UNIFORM_H_
 
 #include "GL/glew.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "gl-program.h"
 #include "../static-compile-options.h"
 
-#include "../matrix-utility.h"
 
 namespace render {
 
@@ -33,8 +34,7 @@ class GLUniform {
   void Pass(GLuint value);
   void Pass(GLfloat* values, size_t count);
   void Pass(GLint* values, size_t count);
-  void Pass(const core::Matrix4f& values, bool transpose = true);
-  void Pass(const glm::mat4x4& values, bool transpose = true);
+  void Pass(const glm::mat4x4& values, bool transpose = false);
 
  protected:
   char uniform_name_[kUniformNameSize];
