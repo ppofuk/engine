@@ -5,11 +5,9 @@
 namespace render {
 
 GLBufferBase::GLBufferBase(GLenum usage, void* data, size_t size)
-    : data_(data), size_(size), usage_(usage), buffer_(0) {
-}
+    : data_(data), size_(size), usage_(usage), buffer_(0) {}
 
-GLBufferBase::GLBufferBase() : data_(NULL), size_(0), buffer_(0) {
-}
+GLBufferBase::GLBufferBase() : data_(NULL), size_(0), buffer_(0) {}
 
 void GLBufferBase::Destroy() {
   if (buffer_) {
@@ -22,35 +20,32 @@ void GLBufferBase::Create(GLenum type) {
   Destroy();
 
   // For Debugging
-  
-  while(glGetError() != GL_NO_ERROR);
-  
+
+  while (glGetError() != GL_NO_ERROR)
+    ;
+
   glGenBuffers(1, &buffer_);
   GLenum err = glGetError();
   if (err != GL_NO_ERROR) {
-    util::Log << util::kLogDateTime << ": " << __FILE__ << ":" <<  __LINE__
-              << ": " << (const char* )gluErrorString(err) << "\n";
+    util::Log << util::kLogDateTime << ": " << __FILE__ << ":" << __LINE__
+              << ": " << (const char*)gluErrorString(err) << "\n";
   }
-  
+
   glBindBuffer(type, buffer_);
   err = glGetError();
   if (err != GL_NO_ERROR) {
-    util::Log << util::kLogDateTime << ": " << __FILE__ << ":" <<  __LINE__
-              << ": " << (const char* )gluErrorString(err) << "\n";
+    util::Log << util::kLogDateTime << ": " << __FILE__ << ":" << __LINE__
+              << ": " << (const char*)gluErrorString(err) << "\n";
   }
 
-  if (type == GL_PIXEL_UNPACK_BUFFER) {
-    glGetError(); 
-  }
-
-  glNamedBufferDataEXT(buffer_, size_, data_, usage_); 
-  // glBufferData(type, size_, data_, usage_);
+  // glNamedBufferDataEXT(buffer_, size_, data_, usage_);
+  glBufferData(type, size_, data_, usage_);
   err = glGetError();
   if (err != GL_NO_ERROR) {
-    util::Log << util::kLogDateTime << ": " << __FILE__ << ":" <<  __LINE__
-              << ": " << (const char* )gluErrorString(err) << "\n";
+    util::Log << util::kLogDateTime << ": " << __FILE__ << ":" << __LINE__
+              << ": " << (const char*)gluErrorString(err) << "\n";
   }
-  
+
   type_ = type;
 }
 
@@ -67,14 +62,14 @@ void GLBufferBase::Bind() const {
 
 void* GLBufferBase::Map(GLenum access) const {
   Bind();
-  
+
   void* ptr = glMapBuffer(type_, access);
   if (ptr == nullptr) {
-    util::Log << util::kLogDateTime << ": " << __FILE__ << ":" <<  __LINE__
-              << ": " << (const char* )gluErrorString(glGetError()) << "\n";
+    util::Log << util::kLogDateTime << ": " << __FILE__ << ":" << __LINE__
+              << ": " << (const char*)gluErrorString(glGetError()) << "\n";
   }
 
-  return ptr; 
+  return ptr;
 }
 
 bool GLBufferBase::Unmap() const {

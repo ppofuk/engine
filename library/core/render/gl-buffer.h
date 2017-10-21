@@ -200,6 +200,7 @@ void CreateElementBuffer(GLBuffer<T>* buffer,
   buffer->Create(GL_ELEMENT_ARRAY_BUFFER, usage, data, size);
 }
 
+
 }  //  namespace render
 
 #endif  // OBSIDIAN_GL_BUFFER_H_
