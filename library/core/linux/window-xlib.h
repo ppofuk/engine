@@ -33,6 +33,7 @@ class WindowXlib : public util::HasLog {
  public:
   WindowXlib();
 
+  [[deprecated("Use SDL2")]]
   bool Init(const char* title,
             i32 x = 0,
             i32 y = 0,
