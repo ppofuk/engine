@@ -45,14 +45,9 @@ void GLUniform::Pass(GLint* values, size_t count) {
   glUniform1iv(location_, count, values);
 }
 
-void GLUniform::Pass(const core::Matrix4f& values, bool transpose) {
-  glUniformMatrix4fv(
-      location_, 1, transpose, values.type_array());
-}
-
 void GLUniform::Pass(const glm::mat4x4& values, bool transpose) {
   glUniformMatrix4fv(
-      location_, 1, transpose, &values[0][0]);
+      location_, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(values));
 }
 
 
