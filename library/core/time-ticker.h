@@ -4,6 +4,19 @@
 #ifndef OBSIDIAN_TIME_TICKER_H_
 #define OBSIDIAN_TIME_TICKER_H_
 
+// Example of usages:
+//
+// Extracting FPS string:
+//
+// core::TimeTicker ticker;
+// while(true) {
+//   ticker.Update();
+//   i64 watch_fps = (i64)1000000000 / ticker.passed_since_update();
+//   sprintf(fps_string, "%ld fps",
+//           (i64)1000000000 / ticker.passed_since_update());
+// }
+
+
 #include "basic-types.h"
 #include <time.h>
 
