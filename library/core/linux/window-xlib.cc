@@ -52,12 +52,7 @@ bool WindowXlib::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
   
   is_init_ = true;
 
-  GLenum err = glewInit();
-  if (err != GLEW_OK) {
-    log << util::kLogDateTime << ": " << (char*)glewGetErrorString(err) << "\n";
-    Destroy();
-    return false;
-  }
+  // TODO(ppofuk): load GLAD
 
   glEnable(GL_DEPTH_TEST);  // TODO(ppofuk): Move?
 

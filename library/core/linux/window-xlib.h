@@ -10,7 +10,7 @@
 #include <X11/Xlib.h>
 #include <X11/keysym.h>
 #include <X11/XKBlib.h>
-#include "GL/glew.h"
+#include "glad/glad.h"
 #include <GL/glx.h>
 
 #include "../basic-types.h"
