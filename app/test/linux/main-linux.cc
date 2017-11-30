@@ -2,12 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "GL/glew.h"
+#include "glad/glad.h"
 #include "core/window-sdl.h"
 #include "core/reader-inl.h"
 #include "core/time-ticker.h"
 #include "../gui.h"
 #include "../simple-shape.h"
+
+#include "core/render/dds-image.h"
 
 #include <string>
 
@@ -51,7 +53,7 @@ int main(int argc, char* argv[]) {
   core::TimeTicker ticker;
   toolkit::Gui gui;
   app::SimpleShape simple_shape;
-
+  render::DDSImage dds_image; 
 
   char fps_string[16];
   fps_string[0] = '\0';
@@ -120,7 +122,7 @@ int main(int argc, char* argv[]) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     simple_shape.Render();
     ImGui::Render();
-
+    
     window.Postrender();
     usleep(100);
   }

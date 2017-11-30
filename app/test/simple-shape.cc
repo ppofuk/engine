@@ -27,6 +27,12 @@ bool SimpleShape::Init() {
 
   render::CreateVertexBuffer(&positions_buffer_, GL_STATIC_DRAW, positions,
                              sizeof(positions) / sizeof(GLfloat));
+  render::CreateVertexBuffer(&texture_positions_buffer_, GL_DYNAMIC_DRAW,
+                             texture_positions,
+                             sizeof(texture_positions) / sizeof(GLfloat));
+  render::CreateVertexBuffer(&normals_buffer_, GL_STATIC_DRAW, normals,
+                             sizeof(normals) / sizeof(GLfloat));
+
   render::CreateElementBuffer(&indices_buffer_, GL_STATIC_DRAW, indices,
                               sizeof(indices) / sizeof(GLushort));
   shader_.Init();
@@ -45,6 +51,9 @@ bool SimpleShape::Init() {
   // Note, shaders model_view_projection unifrom is default to location 0.
   // Use shader_.ReallocateModelViewProjectionUnifrom to change.
   positions_attrib_.BindLocation(shader_.get_program(), 0, "position");
+  texture_positions_attrib_.BindLocation(shader_.get_program(), 1,
+                                         "texture_position");
+  normals_attrib_.BindLocation(shader_.get_program(), 2, "normal");
 
   // Pass and enable attributes
   // Vertex attribute pointers and index buffers are part of Vertex Array Object
@@ -53,7 +62,18 @@ bool SimpleShape::Init() {
   positions_buffer_.Bind();
   positions_attrib_.Enable();
   positions_attrib_.PassVertexPointer(positions_buffer_, 3);
+  texture_positions_buffer_.Bind();
+  texture_positions_attrib_.Enable();
+  texture_positions_attrib_.PassVertexPointer(positions_buffer_, 2);
+  normals_buffer_.Bind();
+  normals_attrib_.Enable();
+  normals_attrib_.PassVertexPointer(positions_buffer_, 3);
+  
   indices_buffer_.Bind();
+
+  image_.Load("textures/arid_01_diffuse.dds");
+  texture_.Init(image_);
+  texture_.Bind(); 
 
   glBindVertexArray(0);
   render::GLBufferBase::UnbindAll();
@@ -87,7 +107,8 @@ void SimpleShape::Render() {
   }
 
   // Bind textures
-
+  texture_.Bind(); 
+  
   // Draw elements
   glDrawElements(GL_TRIANGLES, indices_buffer_.size(), GL_UNSIGNED_SHORT,
                  nullptr);  // Last is offset
@@ -102,8 +123,10 @@ void SimpleShape::Destroy() {
   positions_attrib_.Disable();
   positions_buffer_.Destroy();
   indices_buffer_.Destroy();
+  image_.Destroy();
+  texture_.Destroy(); 
   shader_.Destroy();
-  
+
   glDisableVertexAttribArray(vertex_array_id_);
   glBindVertexArray(0);
   render::GLBufferBase::UnbindAll();

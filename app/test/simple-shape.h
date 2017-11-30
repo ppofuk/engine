@@ -4,6 +4,7 @@
 #include "core/render/gl-buffer.h"
 #include "core/render/gl-shader.h"
 #include "core/render/gl-attribute.h"
+#include "core/render/gl-texture.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include "glm/gtc/type_ptr.hpp"
@@ -41,10 +42,17 @@ class SimpleShape : private util::HasLog {
  private:
   render::GLBuffer<GLfloat> positions_buffer_;
   render::GLBuffer<GLushort> indices_buffer_;
+  render::GLBuffer<GLfloat> texture_positions_buffer_;
+  render::GLBuffer<GLfloat> normals_buffer_; 
   render::GLAttribute<render::GLBuffer<GLfloat> > positions_attrib_;
+  render::GLAttribute<render::GLBuffer<GLfloat> > texture_positions_attrib_;
+  render::GLAttribute<render::GLBuffer<GLfloat> > normals_attrib_; 
   render::GLShader shader_;
   GLuint vertex_array_id_ =
       0;  // TODO(ppofuk): create abstraction for Vertex Array Object
+
+  render::GLTexture texture_;
+  render::DDSImage image_; 
 
   glm::vec3 translate_ = glm::vec3(0.0f);
   glm::vec3 scale_ = glm::vec3(1.0f);
