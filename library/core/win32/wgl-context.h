@@ -5,7 +5,8 @@
 #define OBSIDIAN_WGL_CONTEXT_H_
 // This is only intended for usage where an win32 api window exists.
 
-#include "GL/glew.h"
+// TODO(ppofuk): remove GLEW
+#include "glad/glad.h"
 #include "GL/wglew.h"
 #include "window.h"
 

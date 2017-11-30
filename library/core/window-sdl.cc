@@ -35,7 +35,7 @@ bool WindowSDL::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
     DumpSDLLog();
     return false;
   }
-  UpdateSize(); 
+  UpdateSize();
 
   gl_context_ = SDL_GL_CreateContext(window_);
   if (gl_context_ == nullptr) {
@@ -43,12 +43,9 @@ bool WindowSDL::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
     return false;
   }
 
-  glewExperimental = GL_TRUE; 
-  GLenum err = glewInit();
-  if (err != GLEW_OK) {
-    log << util::kLogDateTime << ": " << (char*)glewGetErrorString(err) << "\n";
-    Destroy();
-    return false;
+  // TODO: glad loader
+  if (!gladLoadGL()) {
+    log << util::kLogDateTime << ": Failed to initialize OpenGL context\n";
   }
 
   char* gl_version = (char*)glGetString(GL_VERSION);
@@ -62,7 +59,7 @@ bool WindowSDL::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
       << "GL vendor: " << gl_vendor << "\n"
       << util::kLogDateTime << ": "
       << "GL renderer: " << gl_renderer << "\n";
-  
+
   is_init_ = true;
   return true;
 }
@@ -70,16 +67,16 @@ bool WindowSDL::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
 void WindowSDL::Destroy() {
   if (gl_context_) {
     SDL_GL_DeleteContext(gl_context_);
-    gl_context_ = nullptr; 
+    gl_context_ = nullptr;
   }
 
   if (window_) {
     SDL_DestroyWindow(window_);
-    window_ = nullptr; 
+    window_ = nullptr;
   }
 
   SDL_Quit();
-  is_init_ = false; 
+  is_init_ = false;
 }
 
 void WindowSDL::Prerender() {
@@ -88,8 +85,8 @@ void WindowSDL::Prerender() {
 
 void WindowSDL::Postrender() {
   // Swap chain
-  // TODO(ppofuk): check is_init_ maybe? 
-  SDL_GL_SwapWindow(window_); 
+  // TODO(ppofuk): check is_init_ maybe?
+  SDL_GL_SwapWindow(window_);
 }
 
 void WindowSDL::UpdateSize() {
@@ -103,24 +100,24 @@ bool WindowSDL::CheckForEvents() {
       if (event_.window.event == SDL_WINDOWEVENT_RESIZED ||
           event_.window.event == SDL_WINDOWEVENT_SIZE_CHANGED ||
           event_.window.event == SDL_WINDOWEVENT_EXPOSED) {
-        UpdateSize(); 
+        UpdateSize();
       }
     }
   }
-  
-  return has_event_; 
+
+  return has_event_;
 }
 
-void WindowSDL::Title(const char *title) {
-  SDL_SetWindowTitle(window_, title); 
+void WindowSDL::Title(const char* title) {
+  SDL_SetWindowTitle(window_, title);
 }
 
 void WindowSDL::Show(int) {
-  SDL_ShowWindow(window_); 
+  SDL_ShowWindow(window_);
 }
 
 void WindowSDL::Hide() {
-  SDL_HideWindow(window_); 
+  SDL_HideWindow(window_);
 }
 
 }  // namespace core

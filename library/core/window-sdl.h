@@ -1,7 +1,7 @@
 #ifndef CORE_WINDOW_SDL_H_
 #define CORE_WINDOW_SDL_H_
 
-#include "GL/glew.h"
+#include "glad/glad.h"
 #include "core/basic-types.h"
 #include "core/logger.h"
 

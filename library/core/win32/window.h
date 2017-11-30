@@ -7,7 +7,7 @@
 // TODO: Add WindowEventType current_event_ to Window, so Window::OnResize,
 //       Window::OnFocus... set current_event_.
 
-#include "GL/glew.h"
+#include "glad/glad.h"
 
 #include <windows.h>
 #include <stdio.h>
