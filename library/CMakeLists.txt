@@ -30,6 +30,7 @@ add_library(ent_core
 target_include_directories(ent_core PUBLIC "./")
 target_include_directories(ent_core PUBLIC "core/")
 target_include_directories(ent_core PUBLIC "../third-party/imgui/")
+target_include_directories(ent_core PUBLIC "../third-party/gli/")
 target_include_directories(ent_core PUBLIC "../third-party")
 
 if(LINUX)
@@ -46,11 +47,10 @@ if(WIN32)
   target_compile_definitions(ent_core PUBLIC "OS_WINDOWS")
 endif()
 
-add_subdirectory("../third-party/glew" "glew")
-target_link_libraries(ent_core PUBLIC glew)
+add_subdirectory("../third-party/glad" "glad")
+target_link_libraries(ent_core PUBLIC glad)
 
 target_include_directories(ent_core PUBLIC "../third-party/glm")
 
 target_include_directories(ent_core PUBLIC ${SDL2_INCLUDE_DIR})
 target_link_libraries(ent_core PUBLIC ${SDL2_LIBRARY})
-
