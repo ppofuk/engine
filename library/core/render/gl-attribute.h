@@ -4,7 +4,7 @@
 #ifndef OBSIDIAN_GL_ATTRIBUTE_H_
 #define OBSIDIAN_GL_ATTRIBUTE_H_
 
-#include "GL/glew.h"
+#include "glad/glad.h"
 
 #include "gl-program.h"
 #include "gl-buffer.h"

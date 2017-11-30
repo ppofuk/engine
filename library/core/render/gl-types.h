@@ -4,7 +4,8 @@
 #ifndef OBSIDIAN_GL_TYPES_H_
 #define OBSIDIAN_GL_TYPES_H_
 
-#include "GL/glew.h"
+#include "glad/glad.h"
+#include "GL/glu.h"
 
 namespace render {
 

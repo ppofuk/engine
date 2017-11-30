@@ -4,7 +4,7 @@
 #ifndef OBSIDIAN_GL_UNIFORM_H_
 #define OBSIDIAN_GL_UNIFORM_H_
 
-#include "GL/glew.h"
+#include "glad/glad.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 

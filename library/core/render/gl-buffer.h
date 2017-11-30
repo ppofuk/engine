@@ -4,7 +4,8 @@
 #ifndef OBSIDIAN_GL_BUFFER_H_
 #define OBSIDIAN_GL_BUFFER_H_
 
-#include "GL/glew.h"
+#include "glad/glad.h"
+#include "core/render/gl-types.h"
 #include "../logger.h"
 #include <string.h>
 

@@ -4,7 +4,9 @@
 #ifndef OBSIDIAN_GL_SHADER_H_
 #define OBSIDIAN_GL_SHADER_H_
 
-#include "GL/glew.h"
+#include "glad/glad.h"
+#include "core/render/gl-types.h"
+
 #include <string.h>
 
 #include "../logger.h"
