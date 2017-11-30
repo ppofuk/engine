@@ -31,3 +31,30 @@ target_include_directories(app_test PUBLIC "test/")
 add_subdirectory("../library" "lib")
 target_link_libraries(app_test
   ent_core)
+
+PROJECT(mesh_convert)
+set (CMAKE_CXX_STANDARD 14)
+file(GLOB mesh_convert_src "mesh-convert/*.cc")
+
+if(LINUX)
+  file(GLOB mesh_convert_platform_src "mesh-convert/linux/*.cc")
+endif()
+
+if(WIN32)
+  file(GLOB mesh_convert_platform_src "mesh-convert/win32/*.cc")
+endif()
+
+if(NOT WIN32)
+add_executable(mesh_convert
+  ${mesh_convert_src}
+  ${mesh_convert_platform_src})
+else()
+  add_executable(mesh_convert WIN32
+  ${mesh_convert_src}
+  ${mesh_convert_platform_src})
+endif()
+
+target_include_directories(mesh_convert PUBLIC "mesh-convert/")
+
+target_link_libraries(mesh_convert
+  ent_core)
