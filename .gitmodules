@@ -8,3 +8,9 @@
 [submodule "third-party/imgui"]
 	path = third-party/imgui
 	url = https://github.com/ocornut/imgui
+[submodule "third-party/gli"]
+	path = third-party/gli
+	url = https://github.com/g-truc/gli.git
+[submodule "third-party/flatbuffers"]
+	path = third-party/flatbuffers
+	url = https://github.com/google/flatbuffers.git
