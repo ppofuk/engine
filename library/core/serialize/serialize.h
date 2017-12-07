@@ -29,11 +29,13 @@ class Serializable {
     SerializeHeader(&header, 0, packs...);
 
     // TODO(ppofuk): check if fwrite returns sizeof(header)
-    std::fwrite(reinterpret_cast<void*>(&header), sizeof(header), 1, file);
+    // std::fwrite(reinterpret_cast<void*>(&header), sizeof(header), 1, file);
+    header.SerializeHeader(file); 
 
     SerializePack(&header, 0, file, packs...);
     // TODO: Write every pack
     std::fclose(file);
+    return true; 
   }
 
   template <typename... R>
@@ -45,11 +47,13 @@ class Serializable {
 
     SerializableHeader<R...> header;
     // TODO(ppofuk): check if fwrite returns sizeof(header)
-    std::fread(reinterpret_cast<void*>(&header), sizeof(header), 1, file);
+    // std::fread(reinterpret_cast<void*>(&header), sizeof(header), 1, file);
+    header.DeserializeHeader(file); 
 
     DeserializePack(&header, 0, file, packs...);
     // TODO: Write every pack
     std::fclose(file);
+    return true; 
   }
 
  protected:
