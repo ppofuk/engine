@@ -2,7 +2,17 @@
 
 namespace app {
 
-bool SimpleShape::Init() {
+bool SimpleShape::Init(const char* mesh_filename) {
+  if (camera_ == nullptr) {
+    return false;
+  }
+
+  if (!mesh_.Load(mesh_filename)) {
+    log << util::kLogDateTime << ": Failed to load " << mesh_filename
+        << " mesh.\n";
+    return false;
+  }
+
   // Clear all past GL errors. Those should have been handled somewhere else.
   while (glGetError() != GL_NO_ERROR)
     ;
@@ -17,24 +27,23 @@ bool SimpleShape::Init() {
     return false;
   }
 
-  GLfloat positions[] = {-1.0f, -1.0f, 0.0f, -1.0f, 1.0f,  0.0f,
-                         1.0f,  1.0f,  0.0f, 1.0f,  -1.0f, 0.0f};
-  GLushort indices[] = {0, 1, 2, 0, 2, 3};
-  GLfloat texture_positions[] = {0.0f, 1.0f, 0.0f, 0.0f,
-                                 1.0f, 0.0f, 1.0f, 1.0f};
-  GLfloat normals[] = {0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f,
-                       0.0f, 0.0f, -1.0f, 0.0f, 0.0f, -1.0f};
+  render::CreateVertexBuffer(
+      &positions_buffer_, GL_STATIC_DRAW,
+      reinterpret_cast<GLfloat*>(mesh_.mutable_vertices()->data()),
+      mesh_.vertices().size() * 3);
+  render::CreateVertexBuffer(
+      &texture_positions_buffer_, GL_DYNAMIC_DRAW,
+      reinterpret_cast<GLfloat*>(mesh_.mutable_texcoords()->data()),
+      mesh_.texcoords().size() * 2);
+  render::CreateVertexBuffer(
+      &normals_buffer_, GL_STATIC_DRAW,
+      reinterpret_cast<GLfloat*>(mesh_.mutable_normals()->data()),
+      mesh_.normals().size() * 3);
 
-  render::CreateVertexBuffer(&positions_buffer_, GL_STATIC_DRAW, positions,
-                             sizeof(positions) / sizeof(GLfloat));
-  render::CreateVertexBuffer(&texture_positions_buffer_, GL_DYNAMIC_DRAW,
-                             texture_positions,
-                             sizeof(texture_positions) / sizeof(GLfloat));
-  render::CreateVertexBuffer(&normals_buffer_, GL_STATIC_DRAW, normals,
-                             sizeof(normals) / sizeof(GLfloat));
-
-  render::CreateElementBuffer(&indices_buffer_, GL_STATIC_DRAW, indices,
-                              sizeof(indices) / sizeof(GLushort));
+  render::CreateElementBuffer(
+      &indices_buffer_, GL_STATIC_DRAW,
+      reinterpret_cast<GLushort*>(mesh_.mutable_indices()->data()),
+      mesh_.indices().size());
   shader_.Init();
   if (!shader_.AddShader("shader/simple.vert",
                          render::GLShader::kVertexShader)) {
@@ -64,16 +73,16 @@ bool SimpleShape::Init() {
   positions_attrib_.PassVertexPointer(positions_buffer_, 3);
   texture_positions_buffer_.Bind();
   texture_positions_attrib_.Enable();
-  texture_positions_attrib_.PassVertexPointer(positions_buffer_, 2);
+  texture_positions_attrib_.PassVertexPointer(texture_positions_buffer_, 2);
   normals_buffer_.Bind();
   normals_attrib_.Enable();
-  normals_attrib_.PassVertexPointer(positions_buffer_, 3);
-  
+  normals_attrib_.PassVertexPointer(normals_buffer_, 3);
+
   indices_buffer_.Bind();
 
   image_.Load("textures/arid_01_diffuse.dds");
   texture_.Init(image_);
-  texture_.Bind(); 
+  texture_.Bind();
 
   glBindVertexArray(0);
   render::GLBufferBase::UnbindAll();
@@ -81,34 +90,42 @@ bool SimpleShape::Init() {
 }
 
 void SimpleShape::Render() {
+  glEnable(GL_DEPTH_TEST);
   glBindVertexArray(vertex_array_id_);
   shader_.get_program_unsafe()->Use();
 
   // Pass changed uniform
   if (model_view_projection_changed_) {
     // TODO(ppofuk): Recalculate model_view_project
-    glm::mat4x4 model = glm::translate(translate_) *
-                        glm::eulerAngleXZ(glm::radians(euler_xz_.x),
-                                          glm::radians(euler_xz_.y)) *
-                        glm::scale(scale_);
+    glm::mat4x4 model =
+        glm::translate(translate_) *
+        glm::eulerAngleYXZ(glm::radians(euler_xz_.x), glm::radians(euler_xz_.y),
+                           glm::radians(euler_xz_.z)) *
+        glm::scale(scale_);
 
+    glm::vec3 camera_position_rotated_ =
+        glm::eulerAngleYXZ(glm::radians(camera_euler_.x),
+                           glm::radians(camera_euler_.y),
+                           glm::radians(camera_euler_.z)) *
+        glm::vec4(camera_position_.x, camera_position_.y, camera_position_.z,
+                  1.0f);
 
     glm::mat4x4 view =
-        glm::lookAt(camera_position_, camera_target_, up_vector_);
+        glm::lookAt(camera_position_rotated_, camera_target_, up_vector_);
 
     glm::mat4 projection = glm::perspective(glm::radians(fov_), aspect_ratio_,
                                             0.0001f, 1000000.0f);
 
     shader_.model_uniform_pass(model);
-    shader_.view_uniform_pass(view);
+    shader_.view_uniform_pass(camera_->view());
     shader_.projection_uniform_pass(projection);
 
     model_view_projection_changed_ = false;
   }
 
   // Bind textures
-  texture_.Bind(); 
-  
+  texture_.Bind();
+
   // Draw elements
   glDrawElements(GL_TRIANGLES, indices_buffer_.size(), GL_UNSIGNED_SHORT,
                  nullptr);  // Last is offset
@@ -124,12 +141,16 @@ void SimpleShape::Destroy() {
   positions_buffer_.Destroy();
   indices_buffer_.Destroy();
   image_.Destroy();
-  texture_.Destroy(); 
+  texture_.Destroy();
   shader_.Destroy();
 
   glDisableVertexAttribArray(vertex_array_id_);
   glBindVertexArray(0);
   render::GLBufferBase::UnbindAll();
+}
+
+void SimpleShape::ForceUpdateModelViewProjection() {
+  model_view_projection_changed_ = true;
 }
 
 void SimpleShape::Gui() {
@@ -141,11 +162,11 @@ void SimpleShape::Gui() {
     model_view_projection_changed_ = true;
   }
 
-  if (ImGui::SliderFloat2("Scale", glm::value_ptr(scale_), 1.0, 100.0f)) {
+  if (ImGui::SliderFloat3("Scale", glm::value_ptr(scale_), 1.0, 100.0f)) {
     model_view_projection_changed_ = true;
   }
 
-  if (ImGui::SliderFloat2("Euler angles (x, z)", glm::value_ptr(euler_xz_),
+  if (ImGui::SliderFloat3("Euler angles (x, z)", glm::value_ptr(euler_xz_),
                           0.0f, 360.0f)) {
     model_view_projection_changed_ = true;
   }
@@ -183,6 +204,12 @@ void SimpleShape::Gui() {
 
   ImGui::Text("Projection parameters:");
   if (ImGui::SliderFloat("Field of View", &fov_, 0.1f, 359.0f)) {
+    model_view_projection_changed_ = true;
+  }
+
+  ImGui::Text("Camera Euler:");
+  if (ImGui::SliderFloat3("Camera Euler on position",
+                          glm::value_ptr(camera_euler_), 0.0f, 359.0f)) {
     model_view_projection_changed_ = true;
   }
 
