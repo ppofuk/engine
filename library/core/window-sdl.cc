@@ -22,6 +22,10 @@ bool WindowSDL::Init(const char* title, i32 x, i32 y, i32 width, i32 height) {
                       gl_context_options_.context_major_version);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION,
                       gl_context_options_.context_minor_version);
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS,
+                      gl_context_options_.multisample_buffers);
+  SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES,
+                      gl_context_options_.multisample_samples);
 
 
   if (SDL_GetCurrentDisplayMode(0, &display_mode_) != 0) {

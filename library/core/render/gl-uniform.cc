@@ -8,8 +8,7 @@
 
 namespace render {
 
-GLUniform::GLUniform() : location_(-1), program_(0) {
-}
+GLUniform::GLUniform() : location_(-1), program_(0) {}
 
 void GLUniform::Locate(const render::GLProgram& program,
                        const char* uniform_name) {
@@ -46,9 +45,18 @@ void GLUniform::Pass(GLint* values, size_t count) {
 }
 
 void GLUniform::Pass(const glm::mat4x4& values, bool transpose) {
-  glUniformMatrix4fv(
-      location_, 1, transpose ? GL_TRUE : GL_FALSE, glm::value_ptr(values));
+  glUniformMatrix4fv(location_, 1, transpose ? GL_TRUE : GL_FALSE,
+                     glm::value_ptr(values));
 }
+
+void GLUniform::Pass(const glm::vec4& value) {
+  glUniform4f(location_, value.x, value.y, value.z, value.w);
+}
+
+void GLUniform::Pass(const glm::vec3& value) {
+  glUniform3f(location_, value.x, value.y, value.z);
+}
+
 
 
 }  // namespace render

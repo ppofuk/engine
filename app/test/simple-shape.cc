@@ -64,6 +64,10 @@ bool SimpleShape::Init(const char* mesh_filename) {
                                          "texture_position");
   normals_attrib_.BindLocation(shader_.get_program(), 2, "normal");
 
+  // Uniforms
+  ambient_light_uniform_.Locate(shader()->get_program(), "ambient_light");
+  camera_view_position_.Locate(shader()->get_program(), "camera_view_position");
+
   // Pass and enable attributes
   // Vertex attribute pointers and index buffers are part of Vertex Array Object
   // state, so they only have to be called once on the beginning / or when
@@ -96,22 +100,11 @@ void SimpleShape::Render() {
 
   // Pass changed uniform
   if (model_view_projection_changed_) {
-    // TODO(ppofuk): Recalculate model_view_project
     glm::mat4x4 model =
         glm::translate(translate_) *
         glm::eulerAngleYXZ(glm::radians(euler_xz_.x), glm::radians(euler_xz_.y),
                            glm::radians(euler_xz_.z)) *
         glm::scale(scale_);
-
-    glm::vec3 camera_position_rotated_ =
-        glm::eulerAngleYXZ(glm::radians(camera_euler_.x),
-                           glm::radians(camera_euler_.y),
-                           glm::radians(camera_euler_.z)) *
-        glm::vec4(camera_position_.x, camera_position_.y, camera_position_.z,
-                  1.0f);
-
-    glm::mat4x4 view =
-        glm::lookAt(camera_position_rotated_, camera_target_, up_vector_);
 
     glm::mat4 projection = glm::perspective(glm::radians(fov_), aspect_ratio_,
                                             0.0001f, 1000000.0f);
@@ -121,6 +114,16 @@ void SimpleShape::Render() {
     shader_.projection_uniform_pass(projection);
 
     model_view_projection_changed_ = false;
+  }
+
+  if (ambient_light_uniforms_changed_) {
+    ambient_light_uniforms_changed_ = false;
+    ambient_light_uniform_.Pass(ambient_light_);
+  }
+
+  if (camera_uniforms_changed_) {
+    camera_uniforms_changed_ = false;
+    camera_view_position_.Pass(camera_->position());
   }
 
   // Bind textures
@@ -153,8 +156,8 @@ void SimpleShape::ForceUpdateModelViewProjection() {
   model_view_projection_changed_ = true;
 }
 
-void SimpleShape::Gui() {
-  ImGui::Begin("Simple Shape");
+void SimpleShape::Gui(const char* name) {
+  ImGui::Begin(name);
   ImGui::Text("Model parameters (model matrix):");
 
   if (ImGui::SliderFloat3("Translatation", glm::value_ptr(translate_), -100.0f,
@@ -171,45 +174,8 @@ void SimpleShape::Gui() {
     model_view_projection_changed_ = true;
   }
 
-  ImGui::Text("Camera parameters (view matrix):");
-  if (ImGui::SliderFloat3("Camera position", glm::value_ptr(camera_position_),
-                          -100.0f, 100.0f)) {
-    model_view_projection_changed_ = true;
-  }
-
-  if (ImGui::SliderFloat3("Camera target", glm::value_ptr(camera_target_),
-                          -100.0f, 100.0f)) {
-    model_view_projection_changed_ = true;
-  }
-
-  if (ImGui::SliderFloat3("Up vector", glm::value_ptr(up_vector_), -1.0f,
-                          1.0f)) {
-    model_view_projection_changed_ = true;
-  }
-
-  ImGui::Text("Add to camera position and target:");
-  static glm::vec3 add_to_camera = glm::vec3(0.0f);
-
-  if (ImGui::SliderFloat3("Add to camera", glm::value_ptr(add_to_camera),
-                          -100.0f, 100.0f)) {
-    model_view_projection_changed_ = true;
-  }
-
-  if (ImGui::Button("Apply")) {
-    camera_position_ += add_to_camera;
-    camera_target_ += add_to_camera;
-    add_to_camera = glm::vec3(0.0f);
-    model_view_projection_changed_ = true;
-  }
-
   ImGui::Text("Projection parameters:");
   if (ImGui::SliderFloat("Field of View", &fov_, 0.1f, 359.0f)) {
-    model_view_projection_changed_ = true;
-  }
-
-  ImGui::Text("Camera Euler:");
-  if (ImGui::SliderFloat3("Camera Euler on position",
-                          glm::value_ptr(camera_euler_), 0.0f, 359.0f)) {
     model_view_projection_changed_ = true;
   }
 

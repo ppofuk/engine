@@ -13,7 +13,7 @@ class Camera {
   // Sets poistion_, target_, up_vector_ vectors and calls Recalculateviewmatrix
   void LookAt(const glm::vec3& position,
               const glm::vec3& target,
-              const glm::vec3& up_vector);
+              const glm::vec3& up_vector = glm::vec3(0.0f, 1.0f, 0.0f));
 
   // Calculates a glm::mat4 view matrix with glm::lookAt call
   void RecalculateViewMatrix();
@@ -27,7 +27,17 @@ class Camera {
 
   // Adds |rotation| vector on |euler_on_position_| vector and calls
   // RecalculateviewMatrixWithRotation
-  void AddRotationAroundPosition(const glm::vec3& rotation);
+  void ApplyRotationAroundPosition(const glm::vec3& rotation);
+
+  // Multiplies a translate matrix position on view matrix.
+  void Move(const glm::vec3& position);
+
+  void Rotate(const glm::vec3& rotation);
+
+  void RotateAround(const glm::vec3& rotation,
+                    const glm::vec3& point_offset = glm::vec3(0.0f,
+                                                              0.0f,
+                                                              10.0f));
 
   // Adds vector |target_add| to |target_|. You should manualy recalculate
   // view matrix with |RecalculateViewMatrix| or
@@ -41,7 +51,10 @@ class Camera {
     position_ += position_add;
   }
 
-  inline const glm::vec3& position() const { return position_; }
+  glm::vec3 position() const {
+    return glm::vec3(-view()[3].x, -view()[3].y, -view()[3].z);
+  }
+  
   inline const glm::vec3& target() const { return target_; }
   inline const glm::vec3& up_vector() const { return up_vector_; }
   inline const glm::vec3& euler_on_position() const {
@@ -57,7 +70,7 @@ class Camera {
   bool HasViewUpdated();
 
  private:
-  bool view_has_updated_ = false; 
+  bool view_has_updated_ = false;
   glm::vec3 position_ = glm::vec3(0.0f, 0.0f, 0.0f);
   glm::vec3 target_ = glm::vec3(0.0f, 0.0f, 0.0f);
   glm::vec3 up_vector_ = glm::vec3(0.0f, 1.0f, 0.0f);

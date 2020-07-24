@@ -51,10 +51,12 @@ void OpenGLDebug(GLenum source,
 int main(int argc, char* argv[]) {
   core::WindowSDL window;
   core::TimeTicker ticker;
+  render::Camera camera;
   toolkit::Gui gui;
   app::SimpleShape simple_shape;
-  render::DDSImage dds_image; 
-
+  app::SimpleShape simple_shape_b;
+  glm::vec4 ambient_light =
+      glm::vec4(0.98823529f, 0.83137254f, 0.95098039f, 0.04f);
   char fps_string[16];
   fps_string[0] = '\0';
 
@@ -73,6 +75,7 @@ int main(int argc, char* argv[]) {
 
   window.Show();
   glEnable(GL_DEPTH_TEST);
+  glEnable(GL_MULTISAMPLE);
   glViewport(0, 0, window.width(), window.height());
 
   if (!gui.Init(&window)) {
@@ -80,9 +83,25 @@ int main(int argc, char* argv[]) {
     return 0;
   }
 
+  int mouse_x = 0;
+  int mouse_y = 0;
+  SDL_GetMouseState(&mouse_x, &mouse_y);
+
+  camera.LookAt(glm::vec3(0.0f, 0.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f));
+  simple_shape.set_camera(&camera);
   simple_shape.set_aspect_ratio((f32)window.width() / window.height());
+  simple_shape_b.set_camera(&camera);
+  simple_shape_b.set_aspect_ratio((f32)window.width() / window.height());
+  simple_shape_b.set_translate_preinit(glm::vec3(-3.0f, 1.0f, -3.0f));
   if (!simple_shape.Init()) {
     simple_shape.Destroy();
+    gui.Shutdown();
+    window.Destroy();
+    return 0;
+  }
+
+  if (!simple_shape_b.Init()) {
+    simple_shape_b.Destroy();
     gui.Shutdown();
     window.Destroy();
     return 0;
@@ -96,16 +115,72 @@ int main(int argc, char* argv[]) {
           event->window.event == SDL_WINDOWEVENT_EXPOSED) {
         glViewport(0, 0, window.width(), window.height());
         simple_shape.set_aspect_ratio((f32)window.width() / window.height());
+        simple_shape_b.set_aspect_ratio((f32)window.width() / window.height());
       }
 
       gui.ProcessEvent(event);
 
       if (event->type == SDL_QUIT) {
         gui.Shutdown();
+        simple_shape.Destroy();
+        simple_shape_b.Destroy();
         window.Destroy();
         return 0;
       }
     }
+
+    const Uint8* key_states = SDL_GetKeyboardState(nullptr);
+    if (key_states[SDL_SCANCODE_W]) {
+      // camera.position_add(glm::vec3(0.0f, 0.0f, -0.20f));
+      // camera.target_add(glm::vec3(0.0f, 0.0f, -0.20f));
+      // camera.RecalculateViewMatrix();
+      camera.Move(glm::vec3(0.0f, 0.0f, 0.20f));
+    }
+
+    if (key_states[SDL_SCANCODE_S]) {
+      // camera.position_add(glm::vec3(0.0f, 0.0f, 0.20f));
+      // camera.target_add(glm::vec3(0.0f, 0.0f, 0.20f));
+      // camera.RecalculateViewMatrix();
+      camera.Move(glm::vec3(0.0f, 0.0f, -0.20f));
+    }
+
+    if (key_states[SDL_SCANCODE_A]) {
+      // camera.position_add(glm::vec3(-0.20f, 0.0f, 0.0f));
+      // camera.target_add(glm::vec3(-0.20f, 0.0f, 0.0f));
+      // camera.RecalculateViewMatrix();
+      camera.Move(glm::vec3(0.20f, 0.0f, 0.0f));
+    }
+
+    if (key_states[SDL_SCANCODE_D]) {
+      // camera.position_add(glm::vec3(0.20f, 0.0f, 0.0f));
+      // camera.target_add(glm::vec3(0.20f, 0.0f, 0.0f));
+      // camera.RecalculateViewMatrix();
+      camera.Move(glm::vec3(-0.20f, 0.0f, 0.0f));
+    }
+
+    if (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+      int mouse_dt_x = 0;
+      int mouse_dt_y = 0;
+      SDL_GetMouseState(&mouse_dt_x, &mouse_dt_y);
+      mouse_dt_x -= mouse_x;
+      mouse_dt_y -= mouse_y;
+
+      camera.Move(glm::vec3((float)mouse_dt_x / 100.0f,
+                            -(float)mouse_dt_y / 100.0f, 0.0f));
+    }
+
+    if (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_RIGHT)) {
+      int mouse_dt_x = 0;
+      int mouse_dt_y = 0;
+      SDL_GetMouseState(&mouse_dt_x, &mouse_dt_y);
+      mouse_dt_x -= mouse_x;
+      mouse_dt_y -= mouse_y;
+      // camera.ApplyRotationAroundPosition(glm::vec3(
+      //     -(float)mouse_dt_x / 10.0f, (float)mouse_dt_y / 10.0f, 0.0f));
+      camera.Rotate(glm::vec3((float)mouse_dt_x / 10.0f,
+                              (float)mouse_dt_y / 10.0f, 0.0f));
+    }
+
 
     gui.NewFrame();
     {
@@ -114,16 +189,49 @@ int main(int argc, char* argv[]) {
       ImGui::Text("Window width: %d, height: %d", window.width(),
                   window.height());
     }
+
     simple_shape.Gui();
+    simple_shape_b.Gui("Simple Shape B");
+
+    ImGui::Begin("Camera");
+    ImGui::Text("Eye: (%f, %f, %f)", -camera.view()[3].x, -camera.view()[3].y,
+                -camera.view()[3].z);
+    ImGui::End();
+
+    ImGui::Begin("Light");
+    ImGui::Text("Ambient Light:");
+    if (ImGui::ColorEdit3("Ambient light color:",
+                          glm::value_ptr(ambient_light))) {
+      simple_shape.set_ambient_light(ambient_light);
+      simple_shape_b.set_ambient_light(ambient_light);
+    }
+
+    if (ImGui::SliderFloat("Intensity", &ambient_light.w, 0, 1)) {
+      simple_shape.set_ambient_light(ambient_light);
+      simple_shape_b.set_ambient_light(ambient_light);
+    }
+    
+    ImGui::End();
+
+    if (camera.HasViewUpdated()) {
+      simple_shape.ForceUpdateModelViewProjection();
+      simple_shape_b.ForceUpdateModelViewProjection();
+      simple_shape.set_camera_uniforms_changed_true();
+      simple_shape_b.set_camera_uniforms_changed_true();
+    }
 
     window.Prerender();
 
-    glClearColor(0.173, 0.251, 0.349, 1);
+    // glClearColor(0.173, 0.251, 0.349, 1);
+    glClearColor(0.0f, 0.0f, 0.0f, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     simple_shape.Render();
+    simple_shape_b.Render();
     ImGui::Render();
-    
+
     window.Postrender();
+
+    SDL_GetMouseState(&mouse_x, &mouse_y);
     usleep(100);
   }
 

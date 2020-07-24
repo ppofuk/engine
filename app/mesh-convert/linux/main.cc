@@ -11,15 +11,15 @@
 #include <iostream>
 
 int main(int argc, char* argv[]) {
-  mesh::Plane plane;
+  // mesh::Plane plane;
   mesh::Sphere sphere;
 
-  plane.Save("plane.bin");
+  // plane.Save("plane.bin");
   sphere.Generate();
   sphere.Save("sphere.bin");
 
   render::Mesh mesh;
-  mesh.Load("sphere.bin");
+  mesh.Load("plane.bin");
 
   std::cout << "mesh.vertices = {";
   for (const auto& i : mesh.vertices()) {

@@ -10,7 +10,9 @@ struct GLContextOptions {
   u32 context_minor_version = 3;
   u32 depth_size = 24;
   u32 stencil_size = 8;
-  u32 double_buffer = 1; 
+  u32 double_buffer = 1;
+  u32 multisample_buffers = 1;
+  u32 multisample_samples = 4; 
 };
 
 } // namespace core

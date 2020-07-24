@@ -35,6 +35,8 @@ class GLUniform {
   void Pass(GLfloat* values, size_t count);
   void Pass(GLint* values, size_t count);
   void Pass(const glm::mat4x4& values, bool transpose = false);
+  void Pass(const glm::vec4& value);
+  void Pass(const glm::vec3& value);
 
  protected:
   char uniform_name_[kUniformNameSize];
